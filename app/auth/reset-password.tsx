@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Colors } from "@/app/constants/Colors";
 
 export default function ResetPasswordScreen() {
   const [mobile, setMobile] = useState("");
@@ -28,7 +29,7 @@ export default function ResetPasswordScreen() {
         {/* Logo/Icon */}
         <View style={styles.logoContainer}>
           <Image
-            source={require("../../assets/images/logo.png")}
+            source={require("@/assets/images/logo.png")}
             style={styles.logoImage}
           />
           <Text style={styles.subtitle}>
@@ -43,7 +44,6 @@ export default function ResetPasswordScreen() {
             <Text style={styles.label}>Phone Number</Text>
             <TextInput
               style={styles.input}
-              placeholderTextColor="#999"
               value={mobile}
               onChangeText={setMobile}
               keyboardType="phone-pad"
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     marginRight: 3,
   },
   loginButton: {
-    backgroundColor: "#C62828",
+    backgroundColor: Colors.auth.primary,
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   signupLink: {
     fontSize: 14,
-    color: "#C62828",
+    color: Colors.auth.primary,
     fontWeight: "600",
   },
 });
