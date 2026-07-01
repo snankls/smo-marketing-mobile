@@ -131,13 +131,26 @@ export default function LoginScreen() {
 
       const token = data.data.authorisation.token;
 
-      const userData = {
-        id: data.data.user.CardCode,
-        full_name: data.data.user.CntctPrsn,
-        CardName: data.data.user.CardName,
-        CntctPrsn: data.data.user.CntctPrsn,
-        Phone1: data.data.user.Phone1,
-      };
+      let userData;
+      if (loginUserType === "shop_keeper") {
+        userData = {
+          id: data.data.user.CardCode,
+          CardCode: data.data.user.CardCode,
+          CardName: data.data.user.CardName,
+          CntctPrsn: data.data.user.CntctPrsn,
+          Phone1: data.data.user.Phone1,
+        };
+      } else {
+        userData = {
+          id: data.data.user.WhsCode,
+          WhsCode: data.data.user.WhsCode,
+          WhsName: data.data.user.WhsName,
+          Location: data.data.user.Location,
+          City: data.data.user.City,
+          Country: data.data.user.Country,
+          U_plist: data.data.user.U_plist,
+        };
+      }
 
       console.log("LOGIN USER =>", userData);
 

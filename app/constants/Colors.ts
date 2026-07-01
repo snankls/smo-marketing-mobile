@@ -64,8 +64,7 @@ export const Colors = {
   },
 
   storeManager: {
-    primary: "#af02ff",
-    //primary: "#ed3237",
+    primary: "#ed3237",
     secondary: "#FFE5E6",
     accent: "#FFB100",
     background: "#FFF8F8",

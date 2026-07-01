@@ -5,10 +5,20 @@ import { useRouter } from 'expo-router';
 
 interface User {
   id: string | number;
-  full_name?: string;
+
+  // Shopkeeper
+  CardCode?: string;
   CardName?: string;
   CntctPrsn?: string;
   Phone1?: string;
+
+  // Store Manager
+  WhsCode?: string;
+  WhsName?: string;
+  Location?: string;
+  City?: string;
+  Country?: string;
+  U_plist?: string;
 }
 
 interface AuthContextType {

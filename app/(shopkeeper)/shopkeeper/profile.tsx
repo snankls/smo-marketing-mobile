@@ -91,12 +91,12 @@ export default function ShopkeeperProfileScreen() {
     >
       {/* HERO CARD */}
       <View style={styles.heroCard}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.editButton}
           onPress={() => router.push("/(shopkeeper)/shopkeeper/profile-edit")}
         >
           <Ionicons name="create-outline" size={18} color="#fff" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.avatar}>
           <Ionicons name="storefront" size={34} color="#fff" />

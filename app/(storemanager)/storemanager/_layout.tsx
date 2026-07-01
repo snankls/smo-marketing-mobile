@@ -2,7 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, Tabs } from "expo-router";
 import { useState } from "react";
 import {
-  Alert,
   Image,
   Modal,
   Platform,
@@ -21,6 +20,8 @@ function CustomHeader({ routeName }: { routeName?: string }) {
   const showBack = routeName === "dashboard" ? false : router.canGoBack();
 
   const { user, logout } = useAuth();
+
+  console.log("User Data in StoreManager:", user); // Log the user data
 
   const handleLogout = async () => {
     setMenuVisible(false);
@@ -50,14 +51,14 @@ function CustomHeader({ routeName }: { routeName?: string }) {
         router.push("/(storemanager)/storemanager/profile");
       },
     },
-    {
-      label: "Change Password",
-      icon: "key-outline" as const,
-      onPress: () => {
-        setMenuVisible(false);
-        router.push("/(storemanager)/storemanager/change-password");
-      },
-    },
+    // {
+    //   label: "Change Password",
+    //   icon: "key-outline" as const,
+    //   onPress: () => {
+    //     setMenuVisible(false);
+    //     router.push("/(storemanager)/storemanager/change-password");
+    //   },
+    // },
     {
       label: "Logout",
       icon: "log-out-outline" as const,
@@ -119,8 +120,8 @@ function CustomHeader({ routeName }: { routeName?: string }) {
                 <Ionicons name="storefront" size={22} color="#fff" />
               </View>
               <View style={{ flex: 1, flexDirection: "column" }}>
-                <Text style={styles.userName}>{user?.CardName}</Text>
-                <Text style={styles.userEmail}>{user?.CntctPrsn}</Text>
+                <Text style={styles.userName}>{user?.WhsName}</Text>
+                {/* <Text style={styles.userEmail}>{user?.CntctPrsn}</Text> */}
               </View>
             </View>
 

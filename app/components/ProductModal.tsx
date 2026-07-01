@@ -111,44 +111,6 @@ export default function ProductModal({
             resizeMode="contain"
           />
 
-          <Text style={styles.label}>Select Shopkeeper</Text>
-
-          <ScrollView
-            style={{
-              maxHeight: 150,
-              marginBottom: 15,
-            }}
-          >
-            {loadingShopkeepers ? (
-              <View style={{ padding: 20, alignItems: 'center' }}>
-                <ActivityIndicator size="small" color={Colors.storeManager.primary} />
-                <Text style={{ marginTop: 8, color: '#6B7280' }}>Loading shopkeepers...</Text>
-              </View>
-            ) : shopkeepers.length === 0 ? (
-              <View style={{ padding: 20, alignItems: 'center' }}>
-                <Text style={{ color: '#6B7280' }}>No shopkeepers available</Text>
-              </View>
-            ) : (
-              shopkeepers.map((shopkeeper) => (
-                <TouchableOpacity
-                  key={shopkeeper.CardCode}
-                  style={[
-                    styles.shopKeeperItem,
-                    selectedShopkeeper?.CardCode === shopkeeper.CardCode && {
-                      backgroundColor: Colors.storeManager.secondary,
-                    },
-                  ]}
-                  onPress={() => {
-                    setSelectedShopkeeper(shopkeeper);
-                    setErrorMessage("");
-                  }}
-                >
-                  <Text>{shopkeeper.CardName}</Text>
-                </TouchableOpacity>
-              ))
-            )}
-          </ScrollView>
-
           <Text style={styles.modalTitle}>{product.ItemName}</Text>
 
           <Text style={styles.unitPrice}>
@@ -212,22 +174,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: "#f8f9fa",
     marginBottom: 8,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#374151",
-    marginTop: 12,
-    marginBottom: 8,
-  },
-  shopKeeperItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 8,
-    marginBottom: 6,
-    backgroundColor: "#fff",
   },
   modalTitle: {
     fontSize: 18,

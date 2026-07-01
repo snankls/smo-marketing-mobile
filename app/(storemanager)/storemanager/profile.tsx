@@ -1,44 +1,78 @@
-import { Colors } from "@/app/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { Colors } from "@/app/constants/Colors";
+import LoadingScreen from "@/app/components/LoadingScreen";
 
-const quickActions = [
-  {
-    icon: "create-outline" as const,
-    title: "Edit Profile",
-    subtitle: "Update your personal and branch information.",
-  },
-  {
-    icon: "shield-checkmark-outline" as const,
-    title: "Security",
-    subtitle: "Change password and review sign-in activity.",
-  },
-  {
-    icon: "notifications-outline" as const,
-    title: "Notifications",
-    subtitle: "Control order alerts and manager reminders.",
-  },
-];
-
-const summaryStats = [
-  { label: "Managed Shops", value: "24" },
-  { label: "Pending Orders", value: "08" },
-  { label: "Team Members", value: "12" },
-];
-
-const infoRows = [
-  { label: "Full Name", value: "Hamza Tariq" },
-  { label: "Role", value: "Store Manager" },
-  { label: "Phone", value: "+92 300 1234567" },
-  { label: "Email", value: "manager@servomotor.com" },
-  { label: "Branch", value: "Karachi Central Warehouse" },
-  { label: "Employee ID", value: "SM-2048" },
-];
+interface StoreManager {
+  WhsCode: string;
+  WhsName: string;
+  City?: string;
+  Country?: string;
+  Location?: string;
+  Phone?: string;
+  Email?: string;
+  U_plist?: string;
+  Inactive?: string;
+  createDate?: string;
+}
 
 export default function ProfileDashboard() {
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const { token } = useAuth();
+
   const insets = useSafeAreaInsets();
   const bottomSpacer = insets.bottom + 120;
+
+  const [loading, setLoading] = useState(true);
+  const [manager, setManager] = useState<StoreManager | null>(null);
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/store-manager`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      setManager(res.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (!manager) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Ionicons
+          name="person-circle-outline"
+          size={60}
+          color={Colors.global.danger}
+        />
+        <Text style={styles.emptyText}>Unable to load profile.</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -49,44 +83,46 @@ export default function ProfileDashboard() {
       <View style={styles.heroCard}>
         <View style={styles.heroTopRow}>
           <View style={styles.avatar}>
-            <Ionicons name="person" size={32} color="#fff" />
+            <Ionicons name="storefront" size={32} color="#fff" />
           </View>
 
-          <TouchableOpacity activeOpacity={0.8} style={styles.statusPill}>
+          {/* <TouchableOpacity activeOpacity={0.8} style={styles.statusPill}>
             <Ionicons name="checkmark-circle" size={16} color="#1B5E20" />
             <Text style={styles.statusText}>Active Manager</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
-        <Text style={styles.name}>Hamza Tariq</Text>
+        <Text style={styles.name}>{manager?.WhsName}</Text>
         <Text style={styles.role}>Store Manager, AW Marketing</Text>
         <Text style={styles.metaText}>
           Overseeing inventory flow, shopkeeper support, and daily order approvals.
         </Text>
       </View>
 
-      <View style={styles.statsRow}>
-        {summaryStats.map((item) => (
-          <View key={item.label} style={styles.statCard}>
-            <Text style={styles.statValue}>{item.value}</Text>
-            <Text style={styles.statLabel}>{item.label}</Text>
-          </View>
-        ))}
-      </View>
-
-      <View style={styles.sectionCard}>
+      {/* <View style={styles.sectionCard}>
         <Text style={styles.sectionTitle}>Profile Details</Text>
-        <Text style={styles.sectionSubtitle}>
-          Primary information used across the manager portal.
-        </Text>
 
-        {infoRows.map((item) => (
-          <View key={item.label} style={styles.infoRow}>
-            <Text style={styles.infoLabel}>{item.label}</Text>
-            <Text style={styles.infoValue}>{item.value}</Text>
-          </View>
-        ))}
-      </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Full Name</Text>
+          <Text style={styles.infoValue}>{manager?.WhsName}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Phone</Text>
+          <Text style={styles.infoValue}>{manager?.Phone}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Email</Text>
+          <Text style={styles.infoValue}>{manager?.Email}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Branch</Text>
+          <Text style={styles.infoValue}>{manager?.Branch}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Employee ID</Text>
+          <Text style={styles.infoValue}>{manager?.EmployeeId}</Text>
+        </View>
+      </View> */}
     </ScrollView>
   );
 }
@@ -254,5 +290,15 @@ const styles = StyleSheet.create({
     color: "#8A5B5B",
     marginTop: 4,
     lineHeight: 18,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    marginTop: 15,
+    fontSize: 16,
+    color: "#6B7280",
   },
 });

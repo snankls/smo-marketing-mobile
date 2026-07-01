@@ -21,6 +21,8 @@ function ShopkeeperHeader({ routeName }: { routeName?: string }) {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const { user, logout, token } = useAuth();
 
+  console.log("User Data in ShopKeeper:", user); // Log the user data
+
   const [cartCount, setCartCount] = useState(0);
   const [menuVisible, setMenuVisible] = useState(false);
   const showBack = routeName === "dashboard" ? false : router.canGoBack();
@@ -77,14 +79,14 @@ function ShopkeeperHeader({ routeName }: { routeName?: string }) {
         router.push("/(shopkeeper)/shopkeeper/profile");
       },
     },
-    {
-      label: "Change Password",
-      icon: "key-outline" as const,
-      onPress: () => {
-        setMenuVisible(false);
-        router.push("/(shopkeeper)/shopkeeper/change-password");
-      },
-    },
+    // {
+    //   label: "Change Password",
+    //   icon: "key-outline" as const,
+    //   onPress: () => {
+    //     setMenuVisible(false);
+    //     router.push("/(shopkeeper)/shopkeeper/change-password");
+    //   },
+    // },
     {
       label: "Logout",
       icon: "log-out-outline" as const,
@@ -240,7 +242,7 @@ export default function ShopkeeperLayout() {
 
           // ✅ THIS LINE HIDES TAB BAR
           route.name === "profile-edit" && { display: "none" },
-          route.name === "change-password" && { display: "none" },
+          // route.name === "change-password" && { display: "none" },
         ],
 
         sceneStyle: {

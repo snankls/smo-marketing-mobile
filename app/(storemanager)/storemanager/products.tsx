@@ -17,15 +17,9 @@ import PageSearch from "@/app/components/PageSearch";
 import PerPageDropdown from "@/app/components/PerPageDropdown";
 import Pagination from "@/app/components/Pagination";
 import ProductCard from "@/app/components/ProductCard";
-import ProductModal from "@/app/components/ProductModal";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { Colors } from "@/app/constants/Colors";
 import LoadingScreen from "@/app/components/LoadingScreen";
-
-interface ShopKeeper {
-  CardCode: string;
-  CardName: string;
-}
 
 interface Product {
   ItemCode: string;
@@ -49,9 +43,6 @@ export default function StoremanagerProductsScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [shopkeepers, setShopkeepers] = useState<ShopKeeper[]>([]);
-  const [selectedShopkeeper, setSelectedShopkeeper] = useState<ShopKeeper | null>(null);
-  const [loadingShopkeepers, setLoadingShopkeepers] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [searching, setSearching] = useState(false);
@@ -62,80 +53,6 @@ export default function StoremanagerProductsScreen() {
   const [pageLoading, setPageLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  // Load cart from AsyncStorage on mount
-  useEffect(() => {
-    loadCartFromStorage();
-  }, []);
-
-  const fetchShopkeepers = async () => {
-    try {
-      if (!token) {
-        return;
-      }
-
-      setLoadingShopkeepers(true);
-      
-      console.log("Fetching shopkeepers from:", `${API_URL}/store-manager/shop-keeper`);
-      console.log("Token:", token ? `${token.substring(0, 20)}...` : "No token");
-      
-      const res = await fetch(
-        `${API_URL}/store-manager/shop-keeper`,
-        {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        }
-      );
-
-      console.log("Shopkeepers response status:", res.status);
-      
-      const json = await res.json();
-      console.log("Shopkeepers response full:", JSON.stringify(json, null, 2));
-
-      // Try different response formats
-      let shopkeepersData = [];
-      
-      // If response is an array directly
-      if (Array.isArray(json)) {
-        shopkeepersData = json;
-      } 
-      // If response has data property
-      else if (json.data && Array.isArray(json.data)) {
-        shopkeepersData = json.data;
-      } 
-      // If response has status and data
-      else if (json.status && json.data && Array.isArray(json.data)) {
-        shopkeepersData = json.data;
-      }
-      // If response has shopkeepers property
-      else if (json.shopkeepers && Array.isArray(json.shopkeepers)) {
-        shopkeepersData = json.shopkeepers;
-      }
-      
-      console.log("Extracted shopkeepers count:", shopkeepersData.length);
-      setShopkeepers(shopkeepersData);
-      
-    } catch (err) {
-      console.log("Error fetching shopkeepers:", err);
-      // Set mock data on error for testing
-      setShopkeepers([
-        { CardCode: "CFDirCSD0000001", CardName: "CSD bahawalpur-Bahawalpur" },
-        { CardCode: "CFDirCSD0000002", CardName: "CSD Cod Khanewal-khanewal" },
-      ]);
-    } finally {
-      setLoadingShopkeepers(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchShopkeepers();
-  }, []);
 
   const fetchProducts = async (pageNumber = 1, searchText = "", perPageValue = perPage) => {
     try {
@@ -175,49 +92,6 @@ export default function StoremanagerProductsScreen() {
   useEffect(() => {
     fetchProducts(1, "");
   }, []);
-
-  const loadCartFromStorage = async () => {
-    try {
-      const savedCart = await AsyncStorage.getItem('shopkeeper_cart');
-      if (savedCart) {
-        const cart = JSON.parse(savedCart);
-        // You can update a cart count state here if needed
-      }
-    } catch (err) {
-      console.log("Error loading cart:", err);
-    }
-  };
-
-  const addToCartLocally = (product: Product, quantity: number, shopkeeper: ShopKeeper) => {
-    try {
-      AsyncStorage.getItem('shopkeeper_cart').then(async (savedCart) => {
-        let cart: any[] = savedCart ? JSON.parse(savedCart) : [];
-        
-        const existingIndex = cart.findIndex(item => item.ItemCode === product.ItemCode);
-        
-        if (existingIndex !== -1) {
-          cart[existingIndex].cartQuantity += quantity;
-        } else {
-          cart.push({
-            ...product,
-            cartQuantity: quantity,
-            shopkeeper: shopkeeper,
-          });
-        }
-        
-        await AsyncStorage.setItem('shopkeeper_cart', JSON.stringify(cart));
-        Alert.alert("Success", "Item added to cart!");
-      });
-    } catch (err) {
-      console.log("Error adding to cart:", err);
-      Alert.alert("Error", "Failed to add item to cart");
-    }
-  };
-
-  const handleAddToCart = (product: Product) => {
-    setSelectedProduct(product);
-    setModalVisible(true);
-  };
 
   useEffect(() => {
     if (!loading) {
@@ -308,12 +182,9 @@ export default function StoremanagerProductsScreen() {
               renderItem={({ item }) => (
                 <ProductCard
                   product={item}
-                  onAddToCart={handleAddToCart}
-                  showAddToCart={true}
+                  showAddToCart={false}
                   variant="default"
                   color={Colors.storeManager.primary}
-                  buttonBgColor={Colors.storeManager.button.buttonBg1}
-                  buttonTextColor={Colors.storeManager.button.buttonText1}
                 />
               )}
               keyExtractor={(item) => item.ItemCode}
@@ -333,19 +204,6 @@ export default function StoremanagerProductsScreen() {
           color={Colors.storeManager.primary}
         />
       </ScrollView>
-
-      <ProductModal
-        visible={modalVisible}
-        product={selectedProduct}
-        shopkeepers={shopkeepers}
-        loadingShopkeepers={loadingShopkeepers}
-        selectedShopkeeper={selectedShopkeeper}
-        setSelectedShopkeeper={setSelectedShopkeeper}
-        onClose={() => setModalVisible(false)}
-        onConfirm={addToCartLocally}
-        buttonBgColor={Colors.storeManager.button.buttonBg1}
-        buttonTextColor={Colors.storeManager.button.buttonText1}
-      />
     </>
   );
 }
