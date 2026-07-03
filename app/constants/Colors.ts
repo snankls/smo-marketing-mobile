@@ -71,10 +71,10 @@ export const Colors = {
     text: "#1F2937",
     heading: "#000000",
     button: {
-        buttonBg1: "#af02ff",
+        buttonBg1: "#ffcc29",
         buttonText1: "#000000",
 
-        buttonBg2: "#af02ff",
+        buttonBg2: "#ffcc29",
         buttonText2: "#000000",
     },
   },

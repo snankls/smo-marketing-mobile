@@ -28,18 +28,10 @@ interface Product {
 
 interface ProductModalProps {
   visible: boolean;
-  shopkeepers: ShopKeeper[];
-  selectedShopkeeper: ShopKeeper | null;
-  setSelectedShopkeeper: (shopkeeper: ShopKeeper) => void;
   product: Product | null;
   onClose: () => void;
-  onConfirm: (
-    product: Product,
-    quantity: number,
-    shopkeeper: ShopKeeper
-  ) => void;
-  loadingShopkeepers?: boolean;
-  color?: string;
+  onConfirm: (product: Product, quantity: number) => void;
+
   buttonBgColor?: string;
   buttonTextColor?: string;
 }
@@ -54,14 +46,10 @@ const formatPrice = (value: number) => {
 export default function ProductModal({
   visible,
   product,
-  shopkeepers,
-  selectedShopkeeper,
-  setSelectedShopkeeper,
   onClose,
   onConfirm,
-  loadingShopkeepers = false,
   buttonBgColor = Colors.shopKeeper.button.buttonBg1,
-  buttonTextColor = Colors.shopKeeper.button.buttonText1
+  buttonTextColor = Colors.shopKeeper.button.buttonText1,
 }: ProductModalProps) {
   const [qty, setQty] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
@@ -81,11 +69,7 @@ export default function ProductModal({
   const decreaseQty = () => setQty((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleConfirm = () => {
-    if (!selectedShopkeeper) {
-      setErrorMessage("Please select a shopkeeper.");
-      return;
-    }
-    onConfirm(product, qty, selectedShopkeeper);
+    onConfirm(product, qty);
     onClose();
   };
 

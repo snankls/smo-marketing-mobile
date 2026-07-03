@@ -83,49 +83,6 @@ export default function ManagerDashboard() {
           <Text style={styles.buttonText}>Manage Users</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.actionCard}>
-        <Text style={styles.actionTitle}>Manage Products</Text>
-        <Text style={styles.actionDesc}>
-          Add, update and monitor engine oil & spare parts
-        </Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.7}
-          onPress={() => router.push("/(storemanager)/storemanager/products")}
-        >
-          <Text style={styles.buttonText}>Go to Products</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.actionCard}>
-        <Text style={styles.actionTitle}>View Orders</Text>
-        <Text style={styles.actionDesc}>
-          Track shopkeeper orders and approvals
-        </Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.7}
-          onPress={() => router.push("/(storemanager)/storemanager/orders")}
-        >
-          <Text style={styles.buttonText}>View Orders</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.actionCard}>
-        <Text style={styles.actionTitle}>Shopkeepers</Text>
-        <Text style={styles.actionDesc}>Manage your shopkeeper network</Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.7}
-          onPress={() => router.push("/(storemanager)/storemanager/shopkeeper")}
-        >
-          <Text style={styles.buttonText}>Manage Users</Text>
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   );
 }

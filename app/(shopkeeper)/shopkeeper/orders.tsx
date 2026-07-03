@@ -93,7 +93,7 @@ export default function ShopKeeperOrdersScreen() {
         params.append("search", currentSearch);
       }
 
-      const res = await fetch(`${API_URL}/test/orders/store-manager?${params.toString()}`, {
+      const res = await fetch(`${API_URL}/orders/shop-keeper?${params.toString()}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

@@ -262,7 +262,8 @@ export default function ShopkeeperProductsScreen() {
         product={selectedProduct}
         onClose={() => setModalVisible(false)}
         onConfirm={addToCartLocally}
-        color={Colors.shopKeeper.primary}
+        buttonBgColor={Colors.shopKeeper.button.buttonBg1}
+        buttonTextColor={Colors.shopKeeper.button.buttonText1}
       />
     </>
   );
