@@ -35,6 +35,8 @@ type OrderItem = {
 export default function OrderDetailsScreen() {
   const { id, invoice } = useLocalSearchParams();
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const IMAGE_URL = process.env.EXPO_PUBLIC_IMAGE_URL;
+  
   const { token } = useAuth();
   const insets = useSafeAreaInsets();
 
@@ -43,6 +45,8 @@ export default function OrderDetailsScreen() {
   const [items, setItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const imageUri = (image?: string) => IMAGE_URL && image ? `${IMAGE_URL}/${image.trim()}` : undefined;
 
   useEffect(() => {
     if (id) {
@@ -224,7 +228,11 @@ export default function OrderDetailsScreen() {
             <View style={styles.itemHeader}>
               <View style={styles.itemImageInfo}>
                 <Image
-                  source={{ uri: item.U_Image }}
+                  source={
+                    item.U_Image
+                      ? { uri: imageUri(item.U_Image) }
+                      : { uri: `${IMAGE_URL}/placeholder.png` }
+                  }
                   style={styles.itemImage}
                 />
               </View>

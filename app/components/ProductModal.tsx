@@ -52,6 +52,9 @@ export default function ProductModal({
   const [qty, setQty] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const IMAGE_URL = process.env.EXPO_PUBLIC_IMAGE_URL;
+  const imageUri = IMAGE_URL && product?.U_Image ? `${IMAGE_URL}/${product.U_Image}` : `${IMAGE_URL}/placeholder.png`;
+
   React.useEffect(() => {
     if (visible) {
       setQty(1);
@@ -88,7 +91,7 @@ export default function ProductModal({
           </TouchableOpacity>
 
           <Image
-            source={{ uri: product.U_Image || 'https://via.placeholder.com/150' }}
+            source={{ uri: imageUri }}
             style={styles.productImage}
             resizeMode="contain"
           />

@@ -38,10 +38,12 @@ type Order = {
 
 export default function StoreManagerOrdersScreen() {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
   const router = useRouter();
   const { token } = useAuth();
   const insets = useSafeAreaInsets();
   const bottomSpacer = insets.bottom + 120;
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -217,15 +219,27 @@ export default function StoreManagerOrdersScreen() {
       const date = new Date(dateString);
       const now = new Date();
 
-      const diffTime = now.getTime() - date.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const diffMs = now.getTime() - date.getTime();
 
-      // Show only "1 day ago", "2 days ago", etc.
-      if (diffDays >= 1) {
+      const diffMinutes = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffMinutes < 1) return "Just now";
+
+      if (diffMinutes < 60) {
+        return `${diffMinutes} min ago`;
+      }
+
+      if (diffHours < 24) {
+        return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+      }
+
+      if (diffDays < 7) {
         return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
       }
 
-      // Same day -> show date only
+      // older than 7 days → show date
       return date.toLocaleDateString("en-PK", {
         day: "2-digit",
         month: "short",

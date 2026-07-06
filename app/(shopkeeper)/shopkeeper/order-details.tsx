@@ -51,6 +51,8 @@ type Product = {
 export default function OrderDetailsScreen() {
   const { id, invoice } = useLocalSearchParams();
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const IMAGE_URL = process.env.EXPO_PUBLIC_IMAGE_URL;
+
   const { token } = useAuth();
   const insets = useSafeAreaInsets();
 
@@ -71,6 +73,8 @@ export default function OrderDetailsScreen() {
 
   const flatListRef = useRef<FlatList>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  const imageUri = (image?: string) => IMAGE_URL && image ? `${IMAGE_URL}/${image.trim()}` : undefined;
 
   useEffect(() => {
     if (id) {
@@ -507,7 +511,11 @@ export default function OrderDetailsScreen() {
             <View style={styles.itemHeader}>
               <View style={styles.itemImageInfo}>
                 <Image
-                  source={{ uri: item.U_Image }}
+                  source={
+                    item.U_Image
+                      ? { uri: imageUri(item.U_Image) }
+                      : { uri: `${IMAGE_URL}/placeholder.png` }
+                  }
                   style={styles.itemImage}
                 />
               </View>
@@ -622,7 +630,7 @@ export default function OrderDetailsScreen() {
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <View>
-              <Text style={styles.modalTitle}>Add Products</Text>
+              <Text style={styles.modalTitle}>Select Products</Text>
               <Text style={styles.modalSubtitle}>Browse and add items to this order</Text>
             </View>
             <TouchableOpacity 
@@ -683,7 +691,11 @@ export default function OrderDetailsScreen() {
                     <View style={styles.productCardContent}>
                       {/* LEFT: Image */}
                       <Image
-                        source={{ uri: item.U_Image }}
+                        source={
+                          item.U_Image
+                            ? { uri: imageUri(item.U_Image) }
+                            : { uri: `${IMAGE_URL}/placeholder.png` }
+                        }
                         style={styles.productImage}
                       />
 
@@ -1242,7 +1254,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 10,
-    padding: 8,
+    padding: 12,
     borderWidth: 1,
     borderColor: '#e5e7eb',
   },

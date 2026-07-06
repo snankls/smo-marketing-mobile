@@ -42,7 +42,7 @@ export default function ProductCard({
 }: ProductCardProps) {
 
   const IMAGE_URL = process.env.EXPO_PUBLIC_IMAGE_URL;
-  const imageUri = IMAGE_URL && product?.U_Image ? `${IMAGE_URL}/${product.U_Image}` : undefined;
+  const imageUri = IMAGE_URL && product?.U_Image ? `${IMAGE_URL}/${product.U_Image}` : `${IMAGE_URL}/placeholder.png`;
 
   const handlePress = () => {
     if (onPress) {

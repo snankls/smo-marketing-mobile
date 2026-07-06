@@ -14,14 +14,12 @@ interface CartItem {
 
 interface CartContextType {
   cartItems: CartItem[];
-  cartCount: number;
-  totalAmount: number;
-  addToCart: (product: any, quantity: number) => Promise<void>;
-  updateQuantity: (itemCode: string, newQty: number) => Promise<void>;
-  removeItem: (itemCode: string) => Promise<void>;
-  clearCart: () => Promise<void>;
+  addItem: (item: CartItem) => void;
+  updateQuantity: (itemCode: string, quantity: number) => void;
+  removeItem: (itemCode: string) => void;
+  clearCart: () => void;
   loadCart: () => Promise<void>;
-  refreshCart: () => Promise<void>; // Add refresh function
+  refreshCart: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -57,18 +55,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addToCart = async (product: any, quantity: number) => {
+  // Rename this function from addToCart to addItem
+  const addItem = async (item: CartItem) => {
     try {
       const currentCart = [...cartItems];
-      const existingIndex = currentCart.findIndex(item => item.ItemCode === product.ItemCode);
+      const existingIndex = currentCart.findIndex(i => i.ItemCode === item.ItemCode);
       
       if (existingIndex !== -1) {
-        currentCart[existingIndex].cartQuantity += quantity;
+        // If exists, add to existing quantity
+        currentCart[existingIndex].cartQuantity += item.cartQuantity;
       } else {
-        currentCart.push({
-          ...product,
-          cartQuantity: quantity,
-        });
+        // If new, add the item
+        currentCart.push(item);
       }
       
       await saveCart(currentCart);
@@ -114,9 +112,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   return (
     <CartContext.Provider value={{
       cartItems,
-      cartCount,
-      totalAmount,
-      addToCart,
+      addItem,
       updateQuantity,
       removeItem,
       clearCart,

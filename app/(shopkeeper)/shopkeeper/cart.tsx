@@ -7,7 +7,11 @@ import {
   View,
   ActivityIndicator,
   Alert,
-  Image
+  Image,
+  Modal,
+  FlatList,
+  TextInput,
+  RefreshControl
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState, useCallback } from "react";
@@ -27,28 +31,115 @@ interface CartItem {
   cartQuantity: number;
 }
 
+type Product = {
+  id: number;
+  FrgnName: string;
+  ItemCode: string;
+  ItemName: string;
+  Price?: string;
+  SalUnitMsr?: string;
+  LastPurPrc?: string;
+  UnitPrice?: string;
+  U_Image?: string;
+};
+
 export default function ShopkeeperCartScreen() {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const IMAGE_URL = process.env.EXPO_PUBLIC_IMAGE_URL;
+
   const insets = useSafeAreaInsets();
   const bottomSpacer = insets.bottom + 120;
   const { token } = useAuth();
 
   // Get everything from CartContext
-  const { cartItems, updateQuantity, removeItem, clearCart, loadCart, refreshCart } = useCart();
+  //const { cartItems, updateQuantity, removeItem, clearCart, loadCart, refreshCart } = useCart();
+  const { cartItems, addItem, updateQuantity, removeItem, clearCart, loadCart, refreshCart } = useCart();
   
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [searchProduct, setSearchProduct] = useState("");
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
   const [orderId, setOrderId] = useState<string | null>(null);
   const [originalCartItems, setOriginalCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [placingOrder, setPlacingOrder] = useState(false);
-  const [changedItems, setChangedItems] = useState<Set<string>>(new Set()); // Track changed items
-
+  const [changedItems, setChangedItems] = useState<Set<string>>(new Set());
+  
   // Load cart on screen focus
   useFocusEffect(
     useCallback(() => {
       loadCartData();
     }, [])
   );
+
+  const imageUri = (image?: string) => IMAGE_URL && image ? `${IMAGE_URL}/${image.trim()}` : undefined;
+
+  const addProduct = (product: Product) => {
+    const exists = cartItems.find(
+      (item) => item.ItemCode === product.ItemCode
+    );
+
+    if (exists) {
+      Alert.alert("Already in Cart", `${product.ItemName} already exists in cart`);
+      return;
+    }
+
+    // Add FrgnName property
+    addItem({
+      ItemCode: product.ItemCode,
+      ItemName: product.ItemName,
+      FrgnName: product.FrgnName || product.ItemName || "",  // <-- Add this
+      SalUnitMsr: product.SalUnitMsr || "N/A",
+      LastPurPrc: product.LastPurPrc || "0",
+      U_Image: product.U_Image,
+      cartQuantity: 1,
+    });
+
+    setShowProductModal(false);
+    setSearchProduct("");
+  };
+
+  const fetchProducts = async (
+    search: string = "",
+    pageNo = 1,
+    append = false
+  ) => {
+    if (!token) return;
+
+    try {
+      if (pageNo === 1) setLoadingProducts(true);
+      else setLoadingMore(true);
+
+      const params = new URLSearchParams();
+      if (search) params.append("search", search);
+      params.append("per_page", "20");
+      params.append("page", pageNo.toString());
+
+      const res = await fetch(`${API_URL}/products?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await res.json();
+      const newData = Array.isArray(json?.data) ? json.data : [];
+
+      setProducts((prev) => (append ? [...prev, ...newData] : newData));
+      setHasMore(newData.length === 20);
+      setPage(pageNo);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoadingProducts(false);
+      setLoadingMore(false);
+    }
+  };
 
   const loadCartData = async () => {
     try {
@@ -281,6 +372,28 @@ export default function ShopkeeperCartScreen() {
         )}
       </View>
 
+      {/* Add Items */}
+      <TouchableOpacity
+        onPress={() => {
+          setProducts([]);
+          fetchProducts("", 1, false);
+          setShowProductModal(true);
+        }}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 10,
+          backgroundColor: "#fff",
+          padding: 10,
+          borderRadius: 10,
+        }}
+      >
+        <Ionicons name="add-circle-outline" size={20} color="#000" />
+        <Text style={{ marginLeft: 6, fontWeight: "600" }}>
+          Add Items
+        </Text>
+      </TouchableOpacity>
+
       {cartItems.length === 0 ? (
         <View style={styles.emptyCart}>
           <Ionicons name="cart-outline" size={80} color="#D1D5DB" />
@@ -305,7 +418,11 @@ export default function ShopkeeperCartScreen() {
             return (
               <View key={item.ItemCode} style={[styles.cartCard, isChanged && styles.unsavedCard]}>
                 <Image
-                  source={{ uri: item.U_Image }}
+                  source={
+                    item.U_Image
+                    ? { uri: imageUri(item.U_Image) }
+                    : { uri: `${IMAGE_URL}/placeholder.png` }
+                  }
                   style={styles.productImage}
                   resizeMode="contain"
                 />
@@ -410,6 +527,192 @@ export default function ShopkeeperCartScreen() {
           </View>
         </>
       )}
+
+      <Modal
+        visible={showProductModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowProductModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <View>
+              <Text style={styles.modalTitle}>Select Products</Text>
+              <Text style={styles.modalSubtitle}>Browse and add items to this order</Text>
+            </View>
+            <TouchableOpacity 
+              onPress={() => setShowProductModal(false)}
+              style={styles.closeButton}
+            >
+              <Ionicons name="close" size={24} color="#6b7280" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.searchContainer}>
+            <Ionicons name="search-outline" size={20} color="#9ca3af" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search products by name or code..."
+              placeholderTextColor="#9ca3af"
+              value={searchProduct}
+              onChangeText={(text) => {
+                setSearchProduct(text);
+                setPage(1);
+                setHasMore(true);
+                fetchProducts(text, 1, false);
+              }}
+            />
+            {searchProduct !== "" && (
+              <TouchableOpacity onPress={() => {
+                setSearchProduct("");
+                fetchProducts("", 1, false);
+              }}>
+                <Ionicons name="close-circle" size={20} color="#9ca3af" />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {loadingProducts && products.length === 0 ? (
+            <View style={styles.modalLoader}>
+              <ActivityIndicator size="large" color={Colors.shopKeeper.primary} />
+              <Text style={styles.loadingText}>Loading products...</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={products}
+              keyExtractor={(item, index) => `${item.ItemCode}-${index}`}
+              renderItem={({ item }) => {
+                const isAlreadyAdded = cartItems.some(orderItem => orderItem.ItemCode === item.ItemCode);
+                
+                return (
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => !isAlreadyAdded && addProduct(item)}
+                    style={[
+                      styles.productCard,
+                      isAlreadyAdded && styles.productCardDisabled,
+                      isAlreadyAdded && styles.productCardActiveBorder
+                    ]}
+                    disabled={isAlreadyAdded}
+                  >
+                    <View style={styles.productCardContent}>
+                      {/* LEFT: Image */}
+                      <Image
+                        source={
+                          item.U_Image
+                            ? { uri: imageUri(item.U_Image) }
+                            : { uri: `${IMAGE_URL}/placeholder.png` }
+                        }
+                        style={styles.productImage}
+                      />
+
+                      {/* MIDDLE: Product Details */}
+                      <View style={styles.productDetails}>
+                        <Text style={styles.productName} numberOfLines={2}>
+                          {item.ItemName || item.FrgnName}
+                        </Text>
+
+                        <View style={styles.productPacking}>
+                          <Ionicons name="cube-outline" size={12} color={Colors.shopKeeper.primary} />
+                          <Text style={styles.packingText}>
+                            Packing: {item.SalUnitMsr || "N/A"}
+                          </Text>
+                        </View>
+
+                        {/* RIGHT: Price & Add Button */}
+                        <View style={styles.productRight}>
+                          <Text style={styles.productPrice}>
+                            ₨ {formatPrice(parseFloat(item.LastPurPrc || "0"))}
+                          </Text>
+
+                          <View style={styles.addButtonWrapper}>
+                            {isAlreadyAdded ? (
+                              <>
+                                <Ionicons name="checkmark-circle" size={22} color="#10b981" />
+                                <Text style={styles.addedButtonText}>Added</Text>
+                              </>
+                            ) : (
+                              <>
+                                <Ionicons name="add-circle-outline" size={22} color={Colors.shopKeeper.primary} />
+                                <Text style={styles.addButtonText}>Add Items</Text>
+                              </>
+                            )}
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+
+                    <View style={styles.productDivider} />
+                  </TouchableOpacity>
+                );
+              }}
+              contentContainerStyle={styles.productList}
+              showsVerticalScrollIndicator={false}
+              
+              // Load more when scroll reaches end
+              onEndReached={() => {
+                if (!loadingMore && hasMore && !loadingProducts) {
+                  const nextPage = page + 1;
+                  fetchProducts(searchProduct, nextPage, true);
+                }
+              }}
+              
+              onEndReachedThreshold={0.3}
+              
+              // Loading footer
+              ListFooterComponent={
+                loadingMore ? (
+                  <View style={styles.loadingMoreFooter}>
+                    <ActivityIndicator size="small" color={Colors.shopKeeper.primary} />
+                    <Text style={styles.loadingMoreText}>Loading more products...</Text>
+                  </View>
+                ) : null
+              }
+              
+              // Empty component
+              ListEmptyComponent={
+                !loadingProducts && products.length === 0 ? (
+                  <View style={styles.noProducts}>
+                    <Ionicons name="search-outline" size={60} color={Colors.shopKeeper.primary} />
+                    <Text style={styles.noProductsText}>No products found</Text>
+                    <Text style={styles.noProductsSubtext}>
+                      {searchProduct ? "Try searching with different keywords" : "Pull to refresh or add products first"}
+                    </Text>
+                    {!searchProduct && (
+                      <TouchableOpacity 
+                        style={styles.refreshButton}
+                        onPress={() => fetchProducts("", 1, false)}
+                      >
+                        <Ionicons name="refresh-outline" size={20} color={Colors.shopKeeper.primary} />
+                        <Text style={styles.refreshButtonText}>Refresh</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ) : null
+              }
+              
+              // Refresh control
+              refreshControl={
+                <RefreshControl
+                  refreshing={loadingProducts && products.length > 0}
+                  onRefresh={() => {
+                    setPage(1);
+                    setHasMore(true);
+                    fetchProducts(searchProduct, 1, false);
+                  }}
+                  colors={[Colors.shopKeeper.primary]}
+                />
+              }
+              
+              // Optimize performance
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              removeClippedSubviews={true}
+            />
+          )}
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -649,5 +952,199 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.6,
+  },
+
+
+
+
+
+  // Add these styles to your StyleSheet
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#f8fafc',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginTop: 4,
+  },
+  closeButton: {
+    padding: 8,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 20,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    marginHorizontal: 20,
+    marginTop: 16,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    height: 48,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 16,
+    color: '#111827',
+    paddingVertical: 8,
+  },
+  modalLoader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    color: '#6b7280',
+    fontSize: 14,
+  },
+  productList: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 20,
+  },
+  productCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    marginBottom: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#f1f5f9',
+  },
+  productCardDisabled: {
+    opacity: 0.7,
+    backgroundColor: '#f9fafb',
+  },
+  productCardActiveBorder: {
+    borderColor: '#10b981',
+  },
+  productCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  productImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+  },
+  productDetails: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  productName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  productPacking: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  packingText: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginLeft: 4,
+  },
+  productRight: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  productPrice: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  addButtonWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  addButtonText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: Colors.shopKeeper.primary,
+    marginLeft: 4,
+  },
+  addedButtonText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#10b981',
+    marginLeft: 4,
+  },
+  productDivider: {
+    height: 1,
+    backgroundColor: '#f1f5f9',
+    marginTop: 12,
+  },
+  loadingMoreFooter: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  loadingMoreText: {
+    marginLeft: 8,
+    color: '#6b7280',
+    fontSize: 14,
+  },
+  noProducts: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  noProductsText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+    marginTop: 16,
+  },
+  noProductsSubtext: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  refreshButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: Colors.shopKeeper.primary,
+    borderRadius: 8,
+  },
+  refreshButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: Colors.shopKeeper.primary,
+    marginLeft: 8,
   },
 });
