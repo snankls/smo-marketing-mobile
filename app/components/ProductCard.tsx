@@ -9,7 +9,7 @@ interface Product {
   ItemName: string;
   FrgnName: string;
   LastPurPrc: string;
-  U_App_ImageURL?: string;
+  U_Image?: string;
 }
 
 interface ProductCardProps {
@@ -40,6 +40,10 @@ export default function ProductCard({
   buttonBgColor = Colors.shopKeeper.button.buttonBg1,
   buttonTextColor = Colors.shopKeeper.button.buttonText1
 }: ProductCardProps) {
+
+  const IMAGE_URL = process.env.EXPO_PUBLIC_IMAGE_URL;
+  const imageUri = IMAGE_URL && product?.U_Image ? `${IMAGE_URL}/${product.U_Image}` : undefined;
+
   const handlePress = () => {
     if (onPress) {
       onPress(product);
@@ -92,7 +96,7 @@ export default function ProductCard({
       activeOpacity={onPress ? 0.7 : 1}
     >
       <Image
-        source={{ uri: product.U_App_ImageURL }}
+        source={{ uri: imageUri }}
         style={getImageStyle()}
         resizeMode="contain"
       />

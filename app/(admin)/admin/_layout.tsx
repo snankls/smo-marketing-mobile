@@ -20,9 +20,6 @@ import { Colors } from "@/app/constants/Colors";
 function ShopkeeperHeader({ routeName }: { routeName?: string }) {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const { user, logout, token } = useAuth();
-
-  console.log("User Data in ShopKeeper:", user); // Log the user data
-
   const [cartCount, setCartCount] = useState(0);
   const [menuVisible, setMenuVisible] = useState(false);
   const showBack = routeName === "dashboard" ? false : router.canGoBack();

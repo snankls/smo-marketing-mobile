@@ -8,7 +8,7 @@ interface CartItem {
   ItemName: string;
   FrgnName: string;
   LastPurPrc: string;
-  U_App_ImageURL?: string;
+  U_Image?: string;
   cartQuantity: number;
 }
 

@@ -33,7 +33,7 @@ type OrderItem = {
   TotalUnitPrice: string;
   createDate?: string;
   isNew?: boolean;
-  U_App_ImageURL?: string;
+  U_Image?: string;
 };
 
 type Product = {
@@ -45,7 +45,7 @@ type Product = {
   SalUnitMsr?: string;
   LastPurPrc?: string;
   UnitPrice?: string;
-  U_App_ImageURL?: string;
+  U_Image?: string;
 };
 
 export default function OrderDetailsScreen() {
@@ -130,7 +130,7 @@ export default function OrderDetailsScreen() {
             Quantity: parseFloat(item.Quantity || "0").toString(),
             UnitPrice: parseFloat(item.UnitPrice || "0").toString(),
             TotalUnitPrice: parseFloat(item.TotalUnitPrice || "0").toString(),
-            U_App_ImageURL: item.U_App_ImageURL,
+            U_Image: item.U_Image,
             isNew: false,
           }))
         : [];
@@ -224,7 +224,7 @@ export default function OrderDetailsScreen() {
       Oitm_id: product.ItemCode,
       SalUnitMsr: product.SalUnitMsr,
       ItemName: product.ItemName,
-      U_App_ImageURL: product.U_App_ImageURL,
+      U_Image: product.U_Image,
       Quantity: "1",
       UnitPrice: price,
       TotalUnitPrice: price,
@@ -507,7 +507,7 @@ export default function OrderDetailsScreen() {
             <View style={styles.itemHeader}>
               <View style={styles.itemImageInfo}>
                 <Image
-                  source={{ uri: item.U_App_ImageURL }}
+                  source={{ uri: item.U_Image }}
                   style={styles.itemImage}
                 />
               </View>
@@ -683,7 +683,7 @@ export default function OrderDetailsScreen() {
                     <View style={styles.productCardContent}>
                       {/* LEFT: Image */}
                       <Image
-                        source={{ uri: item.U_App_ImageURL }}
+                        source={{ uri: item.U_Image }}
                         style={styles.productImage}
                       />
 

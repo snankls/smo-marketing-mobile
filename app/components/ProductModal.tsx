@@ -6,8 +6,6 @@ import {
   View,
   Image,
   Modal,
-  ScrollView,
-  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { Colors } from "@/app/constants/Colors";
@@ -23,7 +21,7 @@ interface Product {
   ItemName: string;
   FrgnName: string;
   LastPurPrc: string;
-  U_App_ImageURL?: string;
+  U_Image?: string;
 }
 
 interface ProductModalProps {
@@ -90,7 +88,7 @@ export default function ProductModal({
           </TouchableOpacity>
 
           <Image
-            source={{ uri: product.U_App_ImageURL || 'https://via.placeholder.com/150' }}
+            source={{ uri: product.U_Image || 'https://via.placeholder.com/150' }}
             style={styles.productImage}
             resizeMode="contain"
           />

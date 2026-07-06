@@ -1,4 +1,3 @@
-import { Colors } from "@/app/constants/Colors";
 import { router } from "expo-router";
 import {
   ScrollView,
@@ -8,11 +7,63 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { Colors } from "@/app/constants/Colors";
+import LoadingScreen from "@/app/components/LoadingScreen";
 
 export default function ManagerDashboard() {
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const insets = useSafeAreaInsets();
-  const bottomSpacer = insets.bottom + 120;
+  const bottomSpacer = insets.bottom + 100;
+  const { user, token } = useAuth();
+  
+  const [dashboardData, setDashboardData] = useState({
+    products_count: 0,
+    order_count: 0,
+    total_sales: 0,
+    loading: true,
+    refreshing: false,
+  });
 
+  const fetchDashboardData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/dashboard`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (response.data) {
+        setDashboardData(prev => ({
+          ...prev,
+          products_count: response.data.products_count || 0,
+          order_count: response.data.order_count || 0,
+          total_sales: response.data.total_sales || 0,
+          loading: false,
+          refreshing: false,
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      setDashboardData(prev => ({ ...prev, loading: false, refreshing: false }));
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setDashboardData(prev => ({ ...prev, refreshing: true }));
+    fetchDashboardData();
+  }, []);
+
+  const formatPrice = (price: number) => `PKR ${(price || 0).toLocaleString('en-PK')}`;
+
+  if (dashboardData.loading) {
+    return <LoadingScreen />;
+  }
+  
   return (
     <ScrollView
       style={styles.container}
@@ -29,12 +80,12 @@ export default function ManagerDashboard() {
 
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
-          <Text style={styles.statNumber}>10</Text>
+          <Text style={styles.statNumber}>{dashboardData.products_count}</Text>
           <Text style={styles.statLabel}>Products</Text>
         </View>
 
         <View style={styles.statCard}>
-          <Text style={styles.statNumber}>5</Text>
+          <Text style={styles.statNumber}>{dashboardData.order_count}</Text>
           <Text style={styles.statLabel}>Orders</Text>
         </View>
       </View>

@@ -49,9 +49,13 @@ export default function LoginScreen() {
       setPassword("1-Dir-csdbahawa");
     }
 
+    // if (loginUserType === "store_manager") {
+    //   setIdentifier("LtChakA1");
+    //   setPassword("2E967340");
+    // }
     if (loginUserType === "store_manager") {
-      setIdentifier("LtChakA1");
-      setPassword("2E967340");
+      setIdentifier("FsCSDBP1");
+      setPassword("0EF9C453");
     }
   }, [loginUserType]);
 
@@ -151,8 +155,6 @@ export default function LoginScreen() {
           U_plist: data.data.user.U_plist,
         };
       }
-
-      console.log("LOGIN USER =>", userData);
 
       // ✅ use frontend selected type
       await login(token, userData, loginUserType);

@@ -100,6 +100,8 @@ export default function StoreManagerOrdersScreen() {
         },
       });
 
+      console.log("Fetch orders response:", res);
+
       const json = await res.json();
       
       // Check if response is an array (direct data) or paginated object

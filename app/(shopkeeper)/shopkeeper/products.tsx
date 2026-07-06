@@ -28,7 +28,7 @@ interface Product {
   ItemName: string;
   FrgnName: string;
   LastPurPrc: string;
-  U_App_ImageURL?: string;
+  U_Image?: string;
 }
 
 interface CartItem extends Product {

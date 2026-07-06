@@ -18,10 +18,7 @@ import { Colors } from "@/app/constants/Colors";
 function CustomHeader({ routeName }: { routeName?: string }) {
   const [menuVisible, setMenuVisible] = useState(false);
   const showBack = routeName === "dashboard" ? false : router.canGoBack();
-
   const { user, logout } = useAuth();
-
-  console.log("User Data in StoreManager:", user); // Log the user data
 
   const handleLogout = async () => {
     setMenuVisible(false);

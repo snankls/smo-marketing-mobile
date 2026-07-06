@@ -23,7 +23,7 @@ interface CartItem {
   ItemName: string;
   SalUnitMsr: string;
   LastPurPrc: string;
-  U_App_ImageURL?: string;
+  U_Image?: string;
   cartQuantity: number;
 }
 
@@ -185,7 +185,7 @@ export default function ShopkeeperCartScreen() {
           UnitPrice: parseFloat(item.LastPurPrc || "0"),
           ItemName: item.ItemName,
           SalUnitMsr: item.SalUnitMsr,
-          U_App_ImageURL: item.U_App_ImageURL,
+          U_Image: item.U_Image,
         })),
       };
 
@@ -305,7 +305,7 @@ export default function ShopkeeperCartScreen() {
             return (
               <View key={item.ItemCode} style={[styles.cartCard, isChanged && styles.unsavedCard]}>
                 <Image
-                  source={{ uri: item.U_App_ImageURL }}
+                  source={{ uri: item.U_Image }}
                   style={styles.productImage}
                   resizeMode="contain"
                 />
