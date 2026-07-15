@@ -1,4 +1,3 @@
-// login.tsx
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -22,8 +21,22 @@ import axios from 'axios';
 import { Colors } from "@/app/constants/Colors";
 
 interface User {
-  id: number | string;
-  full_name: string;
+  id: string | number;
+  CardCode?: string;
+  CardName?: string;
+  CntctPrsn?: string;
+  Phone1?: string;
+  WhsCode?: string;
+  WhsName?: string;
+  Location?: string;
+  City?: string;
+  Country?: string;
+  U_plist?: string;
+  fullname?: string;
+  username?: string;
+  mobile?: string;
+  email?: string;
+  role?: string;
 }
 
 export default function LoginScreen() {
@@ -57,6 +70,11 @@ export default function LoginScreen() {
       setIdentifier("FsCSDBP1");
       setPassword("0EF9C453");
     }
+
+    if (loginUserType === "administrator") {
+      setIdentifier("admin");
+      setPassword("admin123");
+    }
   }, [loginUserType]);
 
   const [message, setMessage] = useState<{
@@ -88,101 +106,115 @@ export default function LoginScreen() {
         // Always sync selected value with API
         if (statusArray.length > 0) {
           const exists = statusArray.find(item => item.key === loginUserType);
-
           if (!exists) {
-            setloginUserType(statusArray[0].key); // fallback to first option
+            setloginUserType(statusArray[0].key);
           }
         }
       }
     } catch (err: any) {
       console.error('Fetch user type error:', err);
-      // Don't logout on error here as user might not be logged in yet
+      // Set default options if API fails
+      setUserTypeOptions([
+        { id: 'shop_keeper', key: 'shop_keeper', value: 'Shop Keeper' },
+        { id: 'store_manager', key: 'store_manager', value: 'Store Manager' },
+        { id: 'administrator', key: 'administrator', value: 'Administrator' },
+      ]);
     }
   };
 
   const handleLogin = async () => {
-  if (!identifier || !password) {
-    setMessage({ text: "Please fill in all fields", type: "error" });
-    return;
-  }
+    if (!identifier || !password) {
+      setMessage({ text: "Please fill in all fields", type: "error" });
+      return;
+    }
 
-  if (!loginUserType) {
-    setMessage({ text: "Please select user type", type: "error" });
-    return;
-  }
+    if (!loginUserType) {
+      setMessage({ text: "Please select user type", type: "error" });
+      return;
+    }
 
-  setLoading(true);
-  setMessage({ text: "", type: null });
+    setLoading(true);
+    setMessage({ text: "", type: null });
 
-  try {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        mobile: identifier,
-        password,
-        user_type: loginUserType,
-      }),
-    });
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          mobile: identifier,
+          password,
+          user_type: loginUserType,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    // ✅ FIX: correct API structure check
-    if (response.ok && data?.data?.authorisation?.token) {
+      if (response.ok && data?.data?.authorisation?.token) {
+        const token = data.data.authorisation.token;
 
-      const token = data.data.authorisation.token;
+        // Initialize userData with a default structure
+        let userData: any = {};
 
-      let userData;
-      if (loginUserType === "shop_keeper") {
-        userData = {
-          id: data.data.user.CardCode,
-          CardCode: data.data.user.CardCode,
-          CardName: data.data.user.CardName,
-          CntctPrsn: data.data.user.CntctPrsn,
-          Phone1: data.data.user.Phone1,
-        };
+        if (loginUserType === "shop_keeper") {
+          userData = {
+            id: data.data.user.CardCode,
+            CardCode: data.data.user.CardCode,
+            CardName: data.data.user.CardName,
+            CntctPrsn: data.data.user.CntctPrsn,
+            Phone1: data.data.user.Phone1,
+          };
+        } else if (loginUserType === "store_manager") {
+          userData = {
+            id: data.data.user.WhsCode,
+            WhsCode: data.data.user.WhsCode,
+            WhsName: data.data.user.WhsName,
+            Location: data.data.user.Location,
+            City: data.data.user.City,
+            Country: data.data.user.Country,
+            U_plist: data.data.user.U_plist,
+          };
+        } else if (loginUserType === "administrator") {
+          userData = {
+            id: data.data.user.id,
+            fullname: data.data.user.fullname,
+            username: data.data.user.username,
+            mobile: data.data.user.mobile,
+            email: data.data.user.email,
+            role: data.data.user.role || 'administrator',
+          };
+        }
+
+        // Now userData is guaranteed to be defined
+        await login(token, userData, loginUserType);
+
+        if (loginUserType === "shop_keeper") {
+          router.replace("/(shopkeeper)/shopkeeper/dashboard");
+        } else if (loginUserType === "store_manager") {
+          router.replace("/(storemanager)/storemanager/dashboard");
+        } else if (loginUserType === "administrator") {
+          router.replace("/(administrator)/administrator/dashboard");
+        }
+
+        setMessage({ text: "Login successful!", type: "success" });
       } else {
-        userData = {
-          id: data.data.user.WhsCode,
-          WhsCode: data.data.user.WhsCode,
-          WhsName: data.data.user.WhsName,
-          Location: data.data.user.Location,
-          City: data.data.user.City,
-          Country: data.data.user.Country,
-          U_plist: data.data.user.U_plist,
-        };
+        setMessage({
+          text: data?.message || "Login failed",
+          type: "error",
+        });
       }
-
-      // ✅ use frontend selected type
-      await login(token, userData, loginUserType);
-
-      if (loginUserType === "shop_keeper") {
-        router.replace("/(shopkeeper)/shopkeeper/dashboard");
-      } 
-      else if (loginUserType === "store_manager") {
-        router.replace("/(storemanager)/storemanager/dashboard");
-      }
-
-      setMessage({ text: "Login successful!", type: "success" });
-    } else {
+    } catch (err) {
+      console.error("Login error:", err);
       setMessage({
-        text: data?.message || "Login failed",
+        text: "Unable to connect to server. Please check your internet connection.",
         type: "error",
       });
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Login error:", err);
-    setMessage({
-      text: "Unable to connect to server. Please check your internet connection.",
-      type: "error",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <View style={styles.safeArea}>

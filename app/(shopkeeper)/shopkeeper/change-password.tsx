@@ -110,8 +110,8 @@ export default function ShopkeeperChangePasswordScreen() {
     } catch (err: any) {
       console.log("Password change error:", err);
       const errorMessage = err?.response?.data?.message || 
-                          err?.response?.data?.error ||
-                          "Failed to change password. Please try again.";
+        err?.response?.data?.error ||
+        "Failed to change password. Please try again.";
       setMessage({ text: errorMessage, type: "error" });
     } finally {
       setLoading(false);

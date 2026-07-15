@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from 'expo-router';
 
 interface CartItem {
   ItemCode: string;
@@ -27,24 +26,25 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const loadCart = async () => {
+  const loadCart = useCallback(async () => {
     try {
       const savedCart = await AsyncStorage.getItem('shopkeeper_cart');
+
       if (savedCart) {
         const cart = JSON.parse(savedCart);
         setCartItems(cart);
       } else {
         setCartItems([]);
       }
+
     } catch (err) {
       console.log("Error loading cart:", err);
     }
-  };
+  }, []);
 
-  const refreshCart = async () => {
-    // Force refresh cart from storage
+  const refreshCart = useCallback(async () => {
     await loadCart();
-  };
+  }, [loadCart]);
 
   const saveCart = async (cart: CartItem[]) => {
     try {
@@ -107,7 +107,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Load cart on mount
   useEffect(() => {
     loadCart();
-  }, []);
+  }, [loadCart]);
 
   return (
     <CartContext.Provider value={{

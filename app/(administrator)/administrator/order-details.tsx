@@ -428,7 +428,7 @@ export default function OrderDetailsScreen() {
               setShowProductModal(true);
             }}
           >
-            <Ionicons name="add-circle-outline" size={22} color={Colors.shopKeeper.primary} />
+            <Ionicons name="add-circle-outline" size={22} color={Colors.administrator.primary} />
             <Text style={styles.addButtonText}>Add Item</Text>
           </TouchableOpacity>
         )}
@@ -457,7 +457,7 @@ export default function OrderDetailsScreen() {
       {/* Update Button */}
       {isPending && (
         <TouchableOpacity
-          style={[styles.updateButton, { backgroundColor: Colors.shopKeeper.button.buttonBg1 } ]}
+          style={[styles.updateButton, { backgroundColor: Colors.administrator.button.buttonBg1 } ]}
           onPress={updateOrder}
           disabled={updating}
         >
@@ -465,8 +465,8 @@ export default function OrderDetailsScreen() {
             <ActivityIndicator size="small" color="#000" />
           ) : (
             <>
-              <Ionicons name="save-outline" size={20} color={ Colors.shopKeeper.button.buttonText1 } />
-              <Text style={[styles.updateButtonText, { color: Colors.shopKeeper.button.buttonText1 }]}>Update Order</Text>
+              <Ionicons name="save-outline" size={20} color={ Colors.administrator.button.buttonText1 } />
+              <Text style={[styles.updateButtonText, { color: Colors.administrator.button.buttonText1 }]}>Update Order</Text>
             </>
           )}
         </TouchableOpacity>
@@ -554,7 +554,7 @@ export default function OrderDetailsScreen() {
                         updateQuantity(item.id, newQty.toString());
                       }}
                     >
-                      <Ionicons name="remove" size={16} color={Colors.shopKeeper.primary} />
+                      <Ionicons name="remove" size={16} color={Colors.administrator.primary} />
                     </TouchableOpacity>
 
                     <TextInput
@@ -574,7 +574,7 @@ export default function OrderDetailsScreen() {
                         updateQuantity(item.id, newQty.toString());
                       }}
                     >
-                      <Ionicons name="add" size={16} color={Colors.shopKeeper.primary} />
+                      <Ionicons name="add" size={16} color={Colors.administrator.primary} />
                     </TouchableOpacity>
                   </View>
                 ) : (
@@ -585,7 +585,7 @@ export default function OrderDetailsScreen() {
               </View>
 
               <View style={styles.totalSection}>
-                <Text style={styles.totalLabel}>Total Amount:</Text>
+                <Text style={styles.totalLabel}>Total</Text>
                 <Text style={styles.totalValue}>
                   PKR {formatPrice(item.TotalUnitPrice)}
                 </Text>
@@ -600,7 +600,7 @@ export default function OrderDetailsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={fetchOrderDetails}
-            colors={[Colors.shopKeeper.primary]}
+            colors={[Colors.administrator.primary]}
           />
         }
         contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 20 }}
@@ -667,7 +667,7 @@ export default function OrderDetailsScreen() {
 
           {loadingProducts && products.length === 0 ? (
             <View style={styles.modalLoader}>
-              <ActivityIndicator size="large" color={Colors.shopKeeper.primary} />
+              <ActivityIndicator size="large" color={Colors.administrator.primary} />
               <Text style={styles.loadingText}>Loading products...</Text>
             </View>
           ) : (
@@ -706,7 +706,7 @@ export default function OrderDetailsScreen() {
                         </Text>
 
                         <View style={styles.productPacking}>
-                          <Ionicons name="cube-outline" size={12} color={Colors.shopKeeper.primary} />
+                          <Ionicons name="cube-outline" size={12} color={Colors.administrator.primary} />
                           <Text style={styles.packingText}>
                             Packing: {item.SalUnitMsr || "N/A"}
                           </Text>
@@ -726,7 +726,7 @@ export default function OrderDetailsScreen() {
                               </>
                             ) : (
                               <>
-                                <Ionicons name="add-circle-outline" size={22} color={Colors.shopKeeper.primary} />
+                                <Ionicons name="add-circle-outline" size={22} color={Colors.administrator.primary} />
                                 <Text style={styles.addButtonText}>Add Items</Text>
                               </>
                             )}
@@ -756,7 +756,7 @@ export default function OrderDetailsScreen() {
               ListFooterComponent={
                 loadingMore ? (
                   <View style={styles.loadingMoreFooter}>
-                    <ActivityIndicator size="small" color={Colors.shopKeeper.primary} />
+                    <ActivityIndicator size="small" color={Colors.administrator.primary} />
                     <Text style={styles.loadingMoreText}>Loading more products...</Text>
                   </View>
                 ) : null
@@ -766,7 +766,7 @@ export default function OrderDetailsScreen() {
               ListEmptyComponent={
                 !loadingProducts && products.length === 0 ? (
                   <View style={styles.noProducts}>
-                    <Ionicons name="search-outline" size={60} color={Colors.shopKeeper.primary} />
+                    <Ionicons name="search-outline" size={60} color={Colors.administrator.primary} />
                     <Text style={styles.noProductsText}>No products found</Text>
                     <Text style={styles.noProductsSubtext}>
                       {searchProduct ? "Try searching with different keywords" : "Pull to refresh or add products first"}
@@ -776,7 +776,7 @@ export default function OrderDetailsScreen() {
                         style={styles.refreshButton}
                         onPress={() => fetchProducts("", 1, false)}
                       >
-                        <Ionicons name="refresh-outline" size={20} color={Colors.shopKeeper.primary} />
+                        <Ionicons name="refresh-outline" size={20} color={Colors.administrator.primary} />
                         <Text style={styles.refreshButtonText}>Refresh</Text>
                       </TouchableOpacity>
                     )}
@@ -793,7 +793,7 @@ export default function OrderDetailsScreen() {
                     setHasMore(true);
                     fetchProducts(searchProduct, 1, false);
                   }}
-                  colors={[Colors.shopKeeper.primary]}
+                  colors={[Colors.administrator.primary]}
                 />
               }
               
@@ -828,7 +828,7 @@ const styles = StyleSheet.create({
   heroCard: {
     marginBottom: 18,
     padding: 18,
-    backgroundColor: Colors.shopKeeper.primary,
+    backgroundColor: Colors.administrator.primary,
     borderRadius: 20,
     shadowColor: Colors.global.shadow,
     shadowOffset: { width: 0, height: 2 },
@@ -924,7 +924,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   addButtonText: {
-    color: Colors.shopKeeper.primary,
+    color: Colors.administrator.primary,
     fontSize: 13,
     fontWeight: "600",
   },
@@ -941,12 +941,12 @@ const styles = StyleSheet.create({
   },
   newItemCard: {
     borderWidth: 1,
-    borderColor: Colors.shopKeeper.primary,
+    borderColor: Colors.administrator.primary,
     backgroundColor: "#f0f9ff",
   },
   highlightCard: {
     borderWidth: 2,
-    borderColor: Colors.shopKeeper.primary,
+    borderColor: Colors.administrator.primary,
     backgroundColor: "#e6f7ff",
   },
   itemHeader: {
@@ -990,7 +990,7 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   newBadge: {
-    backgroundColor: Colors.shopKeeper.primary,
+    backgroundColor: Colors.administrator.primary,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -1070,7 +1070,7 @@ const styles = StyleSheet.create({
   totalValue: {
     fontSize: 15,
     fontWeight: "700",
-    color: Colors.shopKeeper.primary,
+    color: Colors.administrator.primary,
   },
   summaryCard: {
     backgroundColor: Colors.global.white,
@@ -1119,7 +1119,7 @@ const styles = StyleSheet.create({
   grandTotalValue: {
     fontSize: 18,
     fontWeight: "800",
-    color: Colors.shopKeeper.primary,
+    color: Colors.administrator.primary,
   },
   updateButton: {
     flexDirection: "row",
@@ -1152,7 +1152,7 @@ const styles = StyleSheet.create({
   },
   emptyAddButton: {
     marginTop: 16,
-    backgroundColor: Colors.shopKeeper.primary,
+    backgroundColor: Colors.administrator.primary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 12,
@@ -1164,8 +1164,6 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     backgroundColor: "#f8fafc",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
   },
   modalHeader: {
     flexDirection: "row",
@@ -1249,7 +1247,7 @@ const styles = StyleSheet.create({
   },
   productCardActiveBorder: {
     borderLeftWidth: 4,
-    borderLeftColor: Colors.shopKeeper.primary,
+    borderLeftColor: Colors.administrator.primary,
     backgroundColor: '#f0f9ff',
   },
   productImage: {
@@ -1297,7 +1295,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.shopKeeper.primary,
+    color: Colors.administrator.primary,
     flex: 1,
   },
   addButtonWrapper: {
@@ -1348,7 +1346,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   refreshButtonText: {
-    color: Colors.shopKeeper.primary,
+    color: Colors.administrator.primary,
     fontSize: 14,
     fontWeight: '600',
   },

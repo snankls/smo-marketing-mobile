@@ -17,36 +17,12 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import Version from "@/app/components/Version";
 import { Colors } from "@/app/constants/Colors";
 
-function ShopkeeperHeader({ routeName }: { routeName?: string }) {
+function AdministratorHeader({ routeName }: { routeName?: string }) {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const { user, logout, token } = useAuth();
   const [cartCount, setCartCount] = useState(0);
   const [menuVisible, setMenuVisible] = useState(false);
   const showBack = routeName === "dashboard" ? false : router.canGoBack();
-
-  // Add this function
-  const loadCartCount = async () => {
-    try {
-      const savedCart = await AsyncStorage.getItem('shopkeeper_cart');
-      if (savedCart) {
-        const cart = JSON.parse(savedCart);
-        const totalItems = cart.reduce((sum: number, item: any) => sum + (item.cartQuantity || 1), 0);
-        setCartCount(totalItems);
-      } else {
-        setCartCount(0);
-      }
-    } catch (err) {
-      console.log("Error loading cart count:", err);
-      setCartCount(0);
-    }
-  };
-
-  // Add this useFocusEffect
-  useFocusEffect(
-    useCallback(() => {
-      loadCartCount();
-    }, [])
-  );
 
   const handleLogout = async () => {
     setMenuVisible(false);
@@ -73,17 +49,17 @@ function ShopkeeperHeader({ routeName }: { routeName?: string }) {
       icon: "person-outline" as const,
       onPress: () => {
         setMenuVisible(false);
-        router.push("/(shopkeeper)/shopkeeper/profile");
+        router.push("/(administrator)/administrator/profile");
       },
     },
-    {
-      label: "Change Password",
-      icon: "key-outline" as const,
-      onPress: () => {
-        setMenuVisible(false);
-        router.push("/(shopkeeper)/shopkeeper/change-password");
-      },
-    },
+    // {
+    //   label: "Change Password",
+    //   icon: "key-outline" as const,
+    //   onPress: () => {
+    //     setMenuVisible(false);
+    //     router.push("/(administrator)/administrator/change-password");
+    //   },
+    // },
     {
       label: "Logout",
       icon: "log-out-outline" as const,
@@ -115,9 +91,9 @@ function ShopkeeperHeader({ routeName }: { routeName?: string }) {
 
         <View style={styles.headerSide}>
           <TouchableOpacity
-            onPress={() => {
-              router.push("/(shopkeeper)/shopkeeper/cart");
-            }}
+            // onPress={() => {
+            //   router.push("/(administrator)/administrator/cart");
+            // }}
             style={styles.headerButton}
           >
             <Ionicons name="cart-outline" size={24} color="#000000" />
@@ -158,11 +134,11 @@ function ShopkeeperHeader({ routeName }: { routeName?: string }) {
           ]}>
             <View style={styles.userInfoSection}>
               <View style={styles.userAvatar}>
-                <Ionicons name="storefront" size={22} color="#fff" />
+                <Ionicons name="person" size={22} color="#fff" />
               </View>
               <View style={{ flex: 1, flexDirection: "column" }}>
-                <Text style={styles.userName}>{user?.CardName}</Text>
-                <Text style={styles.userEmail}>{user?.CntctPrsn}</Text>
+                <Text style={styles.userName}>{user?.fullname || user?.username}</Text>
+                <Text style={styles.userEmail}>{user?.email || user?.mobile}</Text>
               </View>
             </View>
 
@@ -204,7 +180,7 @@ function ShopkeeperHeader({ routeName }: { routeName?: string }) {
   );
 }
 
-export default function ShopkeeperLayout() {
+export default function AdministratorLayout() {
   const insets = useSafeAreaInsets();
   const tabBarBottom = Math.max(insets.bottom, 6) + 4;
 
@@ -212,10 +188,10 @@ export default function ShopkeeperLayout() {
     <Tabs
       screenOptions={({ route }) => ({
         tabBarShowLabel: false,
-        header: ({ route }) => <ShopkeeperHeader routeName={route.name} />,
+        header: ({ route }) => <AdministratorHeader routeName={route.name} />,
         tabBarHideOnKeyboard: true,
 
-        // ✅ HIDE TAB BAR FOR SPECIFIC SCREENS
+        // HIDE TAB BAR FOR SPECIFIC SCREENS
         tabBarStyle: [
           {
             position: "absolute",
@@ -223,7 +199,7 @@ export default function ShopkeeperLayout() {
             right: 4,
             bottom: tabBarBottom,
             height: 52,
-            backgroundColor: Colors.shopKeeper.primary,
+            backgroundColor: Colors.administrator.primary,
             borderTopWidth: 0,
             borderRadius: 22,
             marginHorizontal: 10,
@@ -237,7 +213,7 @@ export default function ShopkeeperLayout() {
             elevation: 12,
           },
 
-          // ✅ THIS LINE HIDES TAB BAR
+          // THIS LINE HIDES TAB BAR
           route.name === "profile-edit" && { display: "none" },
           route.name === "change-password" && { display: "none" },
         ],
@@ -400,19 +376,19 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.shopKeeper.primary,
+    backgroundColor: Colors.administrator.primary,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 4,
     borderColor: Colors.global.white,
-    shadowColor: Colors.shopKeeper.primary,
+    shadowColor: Colors.administrator.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.28,
     shadowRadius: 12,
     elevation: 10,
   },
   centerTabButtonFocused: {
-    backgroundColor: Colors.shopKeeper.primary,
+    backgroundColor: Colors.administrator.primary,
   },
   modalOverlay: {
     flex: 1,
@@ -442,7 +418,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: Colors.shopKeeper.primary,
+    backgroundColor: Colors.administrator.primary,
     alignItems: "center",
     justifyContent: "center",
   },

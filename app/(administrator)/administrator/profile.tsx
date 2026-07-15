@@ -5,9 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import axios from "axios";
@@ -15,30 +13,25 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import { Colors } from "@/app/constants/Colors";
 import LoadingScreen from "@/app/components/LoadingScreen";
 
-// Shop Keeper Interface
-interface ShopKeeperProfile {
-  CardCode: string;
-  CardName: string;
-  CntctPrsn: string;
-  Phone1: string;
-  City: string;
-  Balance: string;
-  CreditLine: number | string;
-  DebtLine: number | string;
-  Currency: string;
-  CreateDate: string;
-  U_CustType: string;
-  U_WhCode: string;
+// Administrator Interface
+interface AdministratorProfile {
+  fullname: string;
+  username: string;
+  mobile: string;
+  email: string;
+  status: string;
+  createBy: string;
+  createOn: string;
 }
 
-export default function ShopkeeperProfileScreen() {
+export default function AdministratorProfileScreen() {
   const insets = useSafeAreaInsets();
   const bottomSpacer = insets.bottom + 120;
 
   const { token } = useAuth();
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-  const [profile, setProfile] = useState<ShopKeeperProfile | null>(null);
+  const [profile, setProfile] = useState<AdministratorProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   const toNumber = (value: number | string | null | undefined) => {
@@ -53,7 +46,7 @@ export default function ShopkeeperProfileScreen() {
 
       setLoading(true);
 
-      const res = await axios.get(`${API_URL}/shop-keeper`, {
+      const res = await axios.get(`${API_URL}/administrator/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -93,7 +86,7 @@ export default function ShopkeeperProfileScreen() {
       <View style={styles.heroCard}>
         {/* <TouchableOpacity
           style={styles.editButton}
-          onPress={() => router.push("/(shopkeeper)/shopkeeper/profile-edit")}
+          onPress={() => router.push("/(administrator)/administrator/profile-edit")}
         >
           <Ionicons name="create-outline" size={18} color="#fff" />
         </TouchableOpacity> */}
@@ -102,37 +95,10 @@ export default function ShopkeeperProfileScreen() {
           <Ionicons name="storefront" size={34} color="#fff" />
         </View>
 
-        <Text style={styles.name}>{profile?.CardName}</Text>
-        <Text style={styles.meta}>
+        <Text style={styles.name}>{profile?.fullname}</Text>
+        {/* <Text style={styles.meta}>
           {profile?.U_CustType} Customer • {profile?.CardCode}
-        </Text>
-      </View>
-
-      {/* Balance CARDS */}
-      <View style={styles.summaryRow}>
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryValue}>
-            {toNumber(profile?.Balance).toFixed(2)}
-          </Text>
-          <Text style={styles.summaryLabel}>Balance ({profile?.Currency})</Text>
-        </View>
-      </View>
-
-      {/* SUMMARY CARDS */}
-      <View style={styles.summaryRow}>
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryValue}>
-            {toNumber(profile?.CreditLine).toFixed(2)}
-          </Text>
-          <Text style={styles.summaryLabel}>Credit Limit ({profile?.Currency})</Text>
-        </View>
-
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryValue}>
-            {toNumber(profile?.DebtLine).toFixed(2)}
-          </Text>
-          <Text style={styles.summaryLabel}>Debit Limit ({profile?.Currency})</Text>
-        </View>
+        </Text> */}
       </View>
 
       {/* BUSINESS INFORMATION */}
@@ -140,33 +106,23 @@ export default function ShopkeeperProfileScreen() {
         <Text style={styles.sectionTitle}>Business Information</Text>
 
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Business Name</Text>
-          <Text style={styles.infoValue}>{profile?.CardName}</Text>
+          <Text style={styles.infoLabel}>Full Name</Text>
+          <Text style={styles.infoValue}>{profile?.fullname}</Text>
         </View>
 
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Customer Type</Text>
-          <Text style={styles.infoValue}>{profile?.U_CustType}</Text>
-        </View>
-      </View>
-
-      {/* CONTACT INFORMATION */}
-      <View style={styles.sectionCard}>
-        <Text style={styles.sectionTitle}>Contact Information</Text>
-
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Owner Name</Text>
-          <Text style={styles.infoValue}>{profile?.CntctPrsn}</Text>
+          <Text style={styles.infoLabel}>Mobile Number</Text>
+          <Text style={styles.infoValue}>{profile?.mobile}</Text>
         </View>
 
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Phone Number</Text>
-          <Text style={styles.infoValue}>{profile?.Phone1}</Text>
+          <Text style={styles.infoLabel}>Email Address</Text>
+          <Text style={styles.infoValue}>{profile?.email}</Text>
         </View>
 
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>City</Text>
-          <Text style={styles.infoValue}>{profile?.City}</Text>
+          <Text style={styles.infoLabel}>Status</Text>
+          <Text style={styles.infoValue}>{profile?.status}</Text>
         </View>
       </View>
     </ScrollView>
@@ -189,7 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FC",
   },
   heroCard: {
-    backgroundColor: Colors.shopKeeper.primary,
+    backgroundColor: Colors.administrator.primary,
     borderRadius: 20,
     padding: 18,
   },
@@ -224,28 +180,6 @@ const styles = StyleSheet.create({
     color: "#D7E6EA",
     marginTop: 10,
     lineHeight: 20,
-  },
-  summaryRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  summaryCard: {
-    flex: 1,
-    backgroundColor: Colors.global.white,
-    borderRadius: 18,
-    paddingVertical: 18,
-    alignItems: "center",
-  },
-  summaryValue: {
-    color: Colors.shopKeeper.primary,
-    fontSize: 22,
-    fontWeight: "800",
-  },
-  summaryLabel: {
-    color: "#6B7C85",
-    fontSize: 12,
-    marginTop: 4,
-    textAlign: "center",
   },
   sectionCard: {
     backgroundColor: Colors.global.white,

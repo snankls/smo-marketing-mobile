@@ -47,7 +47,7 @@ function RootNavigation() {
       return;
     }
 
-    // ✅ Logged in → prevent going back to auth
+    // Logged in → prevent going back to auth
     if (token && inAuthGroup) {
       if (userType === "shop_keeper") {
         router.replace("/(shopkeeper)/shopkeeper/dashboard");

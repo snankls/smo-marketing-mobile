@@ -19,6 +19,14 @@ interface User {
   City?: string;
   Country?: string;
   U_plist?: string;
+  
+  // Administrator
+  fullname?: string;
+  username?: string;
+  mobile?: string;
+  email?: string;
+  role?: string;
+  name?: string;
 }
 
 interface AuthContextType {
@@ -44,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     baseURL: API_URL,
   });
 
-  // ✅ RESTORE SESSION (CRITICAL FIX)
+  // RESTORE SESSION (CRITICAL FIX)
   useEffect(() => {
     const loadAuth = async () => {
       try {

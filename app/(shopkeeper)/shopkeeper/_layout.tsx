@@ -214,7 +214,7 @@ export default function ShopkeeperLayout() {
         header: ({ route }) => <ShopkeeperHeader routeName={route.name} />,
         tabBarHideOnKeyboard: true,
 
-        // ✅ HIDE TAB BAR FOR SPECIFIC SCREENS
+        // HIDE TAB BAR FOR SPECIFIC SCREENS
         tabBarStyle: [
           {
             position: "absolute",
@@ -236,7 +236,7 @@ export default function ShopkeeperLayout() {
             elevation: 12,
           },
 
-          // ✅ THIS LINE HIDES TAB BAR
+          // THIS LINE HIDES TAB BAR
           route.name === "profile-edit" && { display: "none" },
           // route.name === "change-password" && { display: "none" },
         ],

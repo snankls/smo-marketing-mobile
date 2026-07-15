@@ -79,12 +79,20 @@ export const Colors = {
     },
   },
 
-  admin: {
-    primary: "#0F172A",
-    secondary: "#334155",
-    accent: "#22C55E",
+  administrator: {
+    primary: "#1E40AF",
+    secondary: "#3B82F6",
     background: "#F8FAFC",
+    accent: "#FFB100",
     text: "#111827",
+    heading: "#000000",
+    button: {
+        buttonBg1: "#ffcc29",
+        buttonText1: "#000000",
+
+        buttonBg2: "#ffcc29",
+        buttonText2: "#000000",
+    },
   },
 };
 
