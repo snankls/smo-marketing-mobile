@@ -13,7 +13,6 @@ import {
   View,
   Image,
   Modal,
-  Linking,
   FlatList,
 } from "react-native";
 import { useRef } from "react";
@@ -524,7 +523,7 @@ export default function OrderDetailsScreen() {
                 <Text style={styles.itemCode}>{item.ItemName}</Text>
                 <Text style={styles.productCode}>Packing: {item.SalUnitMsr}</Text>
                 <Text style={styles.itemPrice}>
-                  Unit: PKR {formatPrice(item.UnitPrice)}
+                  Price: PKR {formatPrice(item.UnitPrice)}
                 </Text>
               </View>
 
@@ -585,7 +584,7 @@ export default function OrderDetailsScreen() {
               </View>
 
               <View style={styles.totalSection}>
-                <Text style={styles.totalLabel}>Total Amount:</Text>
+                <Text style={styles.totalLabel}>Total Price:</Text>
                 <Text style={styles.totalValue}>
                   PKR {formatPrice(item.TotalUnitPrice)}
                 </Text>

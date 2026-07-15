@@ -7,7 +7,6 @@ import {
   View,
   RefreshControl,
   Dimensions,
-  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useEffect, useCallback } from "react";

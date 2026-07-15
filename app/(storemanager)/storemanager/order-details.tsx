@@ -3,12 +3,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   RefreshControl,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   Image,
   FlatList,

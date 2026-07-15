@@ -175,7 +175,7 @@ export default function ShopkeeperCartScreen() {
         items: cartItems.map((item) => ({
           Oitm_id: item.ItemCode,
           ItemCode: item.ItemCode,
-          qty: item.cartQuantity,
+          Quantity: item.cartQuantity,
           UnitPrice: parseFloat(item.LastPurPrc || "0"),
           ItemName: item.ItemName,
           SalUnitMsr: item.SalUnitMsr,
@@ -205,7 +205,7 @@ export default function ShopkeeperCartScreen() {
           setChangedItems(new Set());
           await refreshCart();
           Alert.alert("Success", responseText || "Order placed successfully!");
-          router.back(); // Navigate back or to orders screen
+          router.replace("/(shopkeeper)/shopkeeper/orders");
           return;
         }
         throw new Error("Invalid response from server");
@@ -216,7 +216,7 @@ export default function ShopkeeperCartScreen() {
         await AsyncStorage.removeItem('shopkeeper_cart');
         setChangedItems(new Set());
         await refreshCart();
-        router.back();
+        router.replace("/(shopkeeper)/shopkeeper/orders");
       } else {
         Alert.alert("Error", json?.message || json?.error || "Order failed");
       }

@@ -5,9 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import axios from "axios";
@@ -104,7 +102,7 @@ export default function ShopkeeperProfileScreen() {
 
         <Text style={styles.name}>{profile?.CardName}</Text>
         <Text style={styles.meta}>
-          {profile?.U_CustType} Customer • {profile?.CardCode}
+          Shop Keeper Type: {profile?.U_CustType}
         </Text>
       </View>
 
@@ -145,7 +143,7 @@ export default function ShopkeeperProfileScreen() {
         </View>
 
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Customer Type</Text>
+          <Text style={styles.infoLabel}>Shop Keeper Type</Text>
           <Text style={styles.infoValue}>{profile?.U_CustType}</Text>
         </View>
       </View>

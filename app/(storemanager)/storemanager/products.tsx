@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   RefreshControl,
   FlatList,
-  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useEffect, useState, useCallback } from "react";

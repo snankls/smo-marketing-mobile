@@ -13,7 +13,6 @@ import {
   View,
   Image,
   Modal,
-  Linking,
   FlatList,
 } from "react-native";
 import { useRef } from "react";

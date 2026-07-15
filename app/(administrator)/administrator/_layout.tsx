@@ -2,7 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, Tabs, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
 import {
-  Alert,
   Image,
   Modal,
   Platform,
