@@ -133,14 +133,16 @@ export default function ShopkeeperChangePasswordScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Header Card */}
+        <View style={styles.heroCard}>
+          <Text style={styles.heroTitle}>Change Password</Text>
+          <Text style={styles.heroSubtitle}>
+            Update your password to keep your account secure.
+          </Text>
+        </View>
 
         {/* Form Card */}
         <View style={styles.formCard}>
-          {/* Header Card */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Change Password</Text>
-          </View>
-          
           {/* Success/Error Message */}
           {message && (
             <View style={[
@@ -271,11 +273,15 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   heroCard: {
-    backgroundColor: "#0F4C5C",
+    marginBottom: 18,
+    padding: 18,
+    backgroundColor: Colors.shopKeeper.primary,
     borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    position: "relative",
+    shadowColor: Colors.global.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   backButton: {
     position: "absolute",
@@ -300,6 +306,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.global.white,
     borderRadius: 20,
     padding: 20,
+    marginBottom: 60,
     shadowColor: Colors.global.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,

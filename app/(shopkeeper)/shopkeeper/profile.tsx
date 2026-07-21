@@ -18,7 +18,7 @@ interface ShopKeeperProfile {
   CardCode: string;
   CardName: string;
   CntctPrsn: string;
-  Phone1: string;
+  Cellular: string;
   City: string;
   Balance: string;
   CreditLine: number | string;
@@ -89,13 +89,6 @@ export default function ShopkeeperProfileScreen() {
     >
       {/* HERO CARD */}
       <View style={styles.heroCard}>
-        {/* <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => router.push("/(shopkeeper)/shopkeeper/profile-edit")}
-        >
-          <Ionicons name="create-outline" size={18} color="#fff" />
-        </TouchableOpacity> */}
-
         <View style={styles.avatar}>
           <Ionicons name="storefront" size={34} color="#fff" />
         </View>
@@ -159,7 +152,7 @@ export default function ShopkeeperProfileScreen() {
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Phone Number</Text>
-          <Text style={styles.infoValue}>{profile?.Phone1}</Text>
+          <Text style={styles.infoValue}>{profile?.Cellular}</Text>
         </View>
 
         <View style={styles.infoRow}>
@@ -190,14 +183,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.shopKeeper.primary,
     borderRadius: 20,
     padding: 18,
-  },
-  editButton: {
-    position: "absolute",
-    top: 15,
-    right: 15,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    padding: 8,
-    borderRadius: 10,
   },
   avatar: {
     width: 66,

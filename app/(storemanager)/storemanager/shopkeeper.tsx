@@ -120,7 +120,7 @@ export default function ManagerShopkeepersScreen() {
         <View style={styles.cardInfo}>
           <Text style={styles.cardTitle}>{item.CardName}</Text>
           <Text style={styles.cardMeta}>
-            {item.City} • {item.Phone1}
+            {item.City} • {item.Cellular}
           </Text>
           <Text style={styles.cardSmall}>Code: {item.CardCode}</Text>
         </View>

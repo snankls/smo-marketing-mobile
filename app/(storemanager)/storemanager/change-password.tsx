@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 15,
+    marginBottom: 60,
   },
   label: {
     fontSize: 13,

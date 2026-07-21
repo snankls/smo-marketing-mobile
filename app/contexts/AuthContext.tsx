@@ -10,7 +10,7 @@ interface User {
   CardCode?: string;
   CardName?: string;
   CntctPrsn?: string;
-  Phone1?: string;
+  Cellular?: string;
 
   // Store Manager
   WhsCode?: string;

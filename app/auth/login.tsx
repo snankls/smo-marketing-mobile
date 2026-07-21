@@ -25,7 +25,7 @@ interface User {
   CardCode?: string;
   CardName?: string;
   CntctPrsn?: string;
-  Phone1?: string;
+  Cellular?: string;
   WhsCode?: string;
   WhsName?: string;
   Location?: string;
@@ -58,8 +58,9 @@ export default function LoginScreen() {
   // remove this on production - only for testing convenience
   useEffect(() => {
     if (loginUserType === "shop_keeper") {
-      setIdentifier("0622-500096");
-      setPassword("1-Dir-csdbahawa");
+      setIdentifier("923336164045");
+      //setPassword("1-Dir-csdbahawa");
+      setPassword("123456");
     }
 
     // if (loginUserType === "store_manager") {
@@ -164,7 +165,7 @@ export default function LoginScreen() {
             CardCode: data.data.user.CardCode,
             CardName: data.data.user.CardName,
             CntctPrsn: data.data.user.CntctPrsn,
-            Phone1: data.data.user.Phone1,
+            Cellular: data.data.user.Cellular,
           };
         } else if (loginUserType === "store_manager") {
           userData = {

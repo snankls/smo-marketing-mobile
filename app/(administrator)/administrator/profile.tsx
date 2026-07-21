@@ -84,13 +84,6 @@ export default function AdministratorProfileScreen() {
     >
       {/* HERO CARD */}
       <View style={styles.heroCard}>
-        {/* <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => router.push("/(administrator)/administrator/profile-edit")}
-        >
-          <Ionicons name="create-outline" size={18} color="#fff" />
-        </TouchableOpacity> */}
-
         <View style={styles.avatar}>
           <Ionicons name="storefront" size={34} color="#fff" />
         </View>
@@ -148,14 +141,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.administrator.primary,
     borderRadius: 20,
     padding: 18,
-  },
-  editButton: {
-    position: "absolute",
-    top: 15,
-    right: 15,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    padding: 8,
-    borderRadius: 10,
   },
   avatar: {
     width: 66,

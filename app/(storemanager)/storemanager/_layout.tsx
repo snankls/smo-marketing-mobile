@@ -48,14 +48,14 @@ function CustomHeader({ routeName }: { routeName?: string }) {
         router.push("/(storemanager)/storemanager/profile");
       },
     },
-    // {
-    //   label: "Change Password",
-    //   icon: "key-outline" as const,
-    //   onPress: () => {
-    //     setMenuVisible(false);
-    //     router.push("/(storemanager)/storemanager/change-password");
-    //   },
-    // },
+    {
+      label: "Change Password",
+      icon: "key-outline" as const,
+      onPress: () => {
+        setMenuVisible(false);
+        router.push("/(storemanager)/storemanager/change-password");
+      },
+    },
     {
       label: "Logout",
       icon: "log-out-outline" as const,
@@ -290,12 +290,6 @@ export default function ManagerLayout() {
       />
       <Tabs.Screen
         name="notifications"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="profile-edit"
         options={{
           href: null,
         }}

@@ -213,7 +213,6 @@ export default function AdministratorLayout() {
           },
 
           // THIS LINE HIDES TAB BAR
-          route.name === "profile-edit" && { display: "none" },
           route.name === "change-password" && { display: "none" },
         ],
 
@@ -297,12 +296,6 @@ export default function AdministratorLayout() {
       />
       <Tabs.Screen
         name="order-details"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="profile-edit"
         options={{
           href: null,
         }}

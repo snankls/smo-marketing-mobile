@@ -75,14 +75,14 @@ function ShopkeeperHeader({ routeName }: { routeName?: string }) {
         router.push("/(shopkeeper)/shopkeeper/profile");
       },
     },
-    // {
-    //   label: "Change Password",
-    //   icon: "key-outline" as const,
-    //   onPress: () => {
-    //     setMenuVisible(false);
-    //     router.push("/(shopkeeper)/shopkeeper/change-password");
-    //   },
-    // },
+    {
+      label: "Change Password",
+      icon: "key-outline" as const,
+      onPress: () => {
+        setMenuVisible(false);
+        router.push("/(shopkeeper)/shopkeeper/change-password");
+      },
+    },
     {
       label: "Logout",
       icon: "log-out-outline" as const,
@@ -235,10 +235,6 @@ export default function ShopkeeperLayout() {
             shadowRadius: 12,
             elevation: 12,
           },
-
-          // THIS LINE HIDES TAB BAR
-          route.name === "profile-edit" && { display: "none" },
-          // route.name === "change-password" && { display: "none" },
         ],
 
         sceneStyle: {
@@ -321,12 +317,6 @@ export default function ShopkeeperLayout() {
       />
       <Tabs.Screen
         name="order-details"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="profile-edit"
         options={{
           href: null,
         }}
