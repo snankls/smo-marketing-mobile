@@ -19,7 +19,7 @@ interface AdministratorProfile {
   username: string;
   mobile: string;
   email: string;
-  status: string;
+  u_status: string;
   createBy: string;
   createOn: string;
 }
@@ -115,7 +115,7 @@ export default function AdministratorProfileScreen() {
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Status</Text>
-          <Text style={styles.infoValue}>{profile?.status}</Text>
+          <Text style={styles.infoValue}>{profile?.u_status}</Text>
         </View>
       </View>
     </ScrollView>

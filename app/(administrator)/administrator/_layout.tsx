@@ -51,14 +51,14 @@ function AdministratorHeader({ routeName }: { routeName?: string }) {
         router.push("/(administrator)/administrator/profile");
       },
     },
-    // {
-    //   label: "Change Password",
-    //   icon: "key-outline" as const,
-    //   onPress: () => {
-    //     setMenuVisible(false);
-    //     router.push("/(administrator)/administrator/change-password");
-    //   },
-    // },
+    {
+      label: "Change Password",
+      icon: "key-outline" as const,
+      onPress: () => {
+        setMenuVisible(false);
+        router.push("/(administrator)/administrator/change-password");
+      },
+    },
     {
       label: "Logout",
       icon: "log-out-outline" as const,

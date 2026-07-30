@@ -10,6 +10,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Modal,
+  FlatList,
   StatusBar,
   ScrollView,
 } from "react-native";
@@ -45,6 +47,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [typeModalVisible, settypeModalVisible] = useState(false);
   const [loginUserType, setloginUserType] = useState("shop_keeper");
   const [userTypeOptions, setUserTypeOptions] = useState<any[]>([]);
 
@@ -55,17 +58,22 @@ export default function LoginScreen() {
   // remove this on production - only for testing convenience
   useEffect(() => {
     if (loginUserType === "shop_keeper") {
-      setIdentifier("923018087407");
+      setIdentifier("923336164045");
+      //setPassword("1-Dir-csdbahawa");
       setPassword("123456");
     }
 
+    // if (loginUserType === "store_manager") {
+    //   setIdentifier("LtChakA1");
+    //   setPassword("2E967340");
+    // }
     if (loginUserType === "store_manager") {
       setIdentifier("FsCSDBP1");
-      setPassword("654321");
+      setPassword("0EF9C453");
     }
 
     if (loginUserType === "administrator") {
-      setIdentifier("923000000000");
+      setIdentifier("admin");
       setPassword("admin123");
     }
   }, [loginUserType]);
@@ -96,6 +104,7 @@ export default function LoginScreen() {
         }));
         setUserTypeOptions(statusArray);
 
+        // Always sync selected value with API
         if (statusArray.length > 0) {
           const exists = statusArray.find(item => item.key === loginUserType);
           if (!exists) {
@@ -105,6 +114,7 @@ export default function LoginScreen() {
       }
     } catch (err: any) {
       console.error('Fetch user type error:', err);
+      // Set default options if API fails
       setUserTypeOptions([
         { id: 'shop_keeper', key: 'shop_keeper', value: 'Shop Keeper' },
         { id: 'store_manager', key: 'store_manager', value: 'Store Manager' },
@@ -145,6 +155,8 @@ export default function LoginScreen() {
 
       if (response.ok && data?.data?.authorisation?.token) {
         const token = data.data.authorisation.token;
+
+        // Initialize userData with a default structure
         let userData: any = {};
 
         if (loginUserType === "shop_keeper") {
@@ -176,6 +188,7 @@ export default function LoginScreen() {
           };
         }
 
+        // Now userData is guaranteed to be defined
         await login(token, userData, loginUserType);
 
         if (loginUserType === "shop_keeper") {
@@ -201,32 +214,6 @@ export default function LoginScreen() {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getUserTypeIcon = (key: string) => {
-    switch(key) {
-      case 'shop_keeper':
-        return 'storefront-outline';
-      case 'store_manager':
-        return 'business-outline';
-      case 'administrator':
-        return 'shield-outline';
-      default:
-        return 'person-outline';
-    }
-  };
-
-  const getUserTypeColor = (key: string) => {
-    switch(key) {
-      case 'shop_keeper':
-        return '#3B82F6';
-      case 'store_manager':
-        return '#8B5CF6';
-      case 'administrator':
-        return '#EF4444';
-      default:
-        return '#6B7280';
     }
   };
 
@@ -260,58 +247,10 @@ export default function LoginScreen() {
 
             {/* Form */}
             <View style={styles.formContainer}>
-              {/* User Type - Card Selection */}
-              <View style={styles.userTypeContainer}>
-                <Text style={styles.label}>
-                  Select User Type <Text style={styles.requiredStar}>*</Text>
-                </Text>
-                
-                <View style={styles.cardGrid}>
-                  {userTypeOptions.map((option) => {
-                    const isSelected = loginUserType === option.key;
-                    const iconName = getUserTypeIcon(option.key);
-                    const color = getUserTypeColor(option.key);
-                    
-                    return (
-                      <TouchableOpacity
-                        key={option.id}
-                        style={[
-                          styles.userTypeCard,
-                          isSelected && styles.userTypeCardSelected,
-                          { borderColor: isSelected ? color : '#E5E7EB' }
-                        ]}
-                        onPress={() => setloginUserType(option.key)}
-                        activeOpacity={0.8}
-                      >
-                        <View style={[styles.cardIconContainer, { backgroundColor: isSelected ? color : '#F3F4F6' }]}>
-                          <Ionicons 
-                            name={iconName} 
-                            size={24} 
-                            color={isSelected ? '#FFFFFF' : '#6B7280'} 
-                          />
-                        </View>
-                        <Text style={[
-                          styles.cardTitle,
-                          isSelected && styles.cardTitleSelected,
-                          { color: isSelected ? color : '#374151' }
-                        ]}>
-                          {option.value}
-                        </Text>
-                        {isSelected && (
-                          <View style={[styles.checkmarkBadge, { backgroundColor: color }]}>
-                            <Ionicons name="checkmark" size={14} color="#FFFFFF" />
-                          </View>
-                        )}
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-              </View>
-
               {/* Identifier */}
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>
-                  Phone Number / Username <Text style={styles.requiredStar}>*</Text>
+                  Phone Number <Text style={styles.requiredStar}>*</Text>
                 </Text>
                 <View style={styles.inputWrapper}>
                   <Ionicons name="call-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
@@ -352,6 +291,28 @@ export default function LoginScreen() {
                     />
                   </TouchableOpacity>
                 </View>
+              </View>
+
+              {/* User Type */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>
+                  User Type <Text style={styles.requiredStar}>*</Text>
+                </Text>
+                <TouchableOpacity 
+                  style={styles.modalTrigger}
+                  onPress={() => settypeModalVisible(true)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.modalTriggerLeft}>
+                    <Ionicons name="people-outline" size={20} color="#9CA3AF" />
+                    <Text style={loginUserType ? styles.modalTriggerText : styles.modalTriggerPlaceholder}>
+                      {loginUserType 
+                      ? (userTypeOptions.find(opt => opt.key === loginUserType)?.value || loginUserType)
+                      : 'Select User Type'}
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+                </TouchableOpacity>
               </View>
 
               {/* Message */}
@@ -401,6 +362,65 @@ export default function LoginScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* User Type Selection Modal */}
+      <Modal 
+        visible={typeModalVisible} 
+        transparent 
+        animationType="slide" 
+        onRequestClose={() => settypeModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity 
+            style={styles.modalBackdrop} 
+            activeOpacity={1} 
+            onPress={() => settypeModalVisible(false)}
+          />
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select User Type</Text>
+              <TouchableOpacity 
+                onPress={() => settypeModalVisible(false)} 
+                style={styles.closeButton}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Ionicons name="close" size={24} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+
+            {userTypeOptions.length === 0 ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
+                <Text style={styles.emptyText}>No user type options available</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={userTypeOptions}
+                extraData={loginUserType}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[styles.modalItem, loginUserType === item.key && styles.selectedModalItem]}
+                    onPress={() => {
+                      setloginUserType(item.key);
+                      settypeModalVisible(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.modalItemText, loginUserType === item.key && styles.selectedModalItemText]}>
+                      {item.value}
+                    </Text>
+                    {loginUserType === item.key && (
+                      <Ionicons name="checkmark-circle" size={22} color="#ed3237" />
+                    )}
+                  </TouchableOpacity>
+                )}
+                showsVerticalScrollIndicator={false}
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -492,65 +512,29 @@ const styles = StyleSheet.create({
     right: 12,
     padding: 4,
   },
-  userTypeContainer: {
-    marginBottom: 24,
-  },
-  cardGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginHorizontal: -6,
-  },
-  userTypeCard: {
-    flex: 1,
-    minWidth: '30%',
-    maxWidth: '33.33%',
-    margin: 6,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
+  modalTrigger: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
     borderRadius: 12,
-    borderWidth: 2,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    backgroundColor: "#F9FAFB",
   },
-  userTypeCardSelected: {
-    backgroundColor: '#F8FAFC',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+  modalTriggerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
-  cardIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
+  modalTriggerText: {
+    color: "#1F2937",
+    fontSize: 16,
   },
-  cardTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  cardTitleSelected: {
-    fontWeight: '700',
-  },
-  checkmarkBadge: {
-    position: 'absolute',
-    top: -6,
-    right: -6,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    alignItems: 'center',
-    justifyContent: 'center',
+  modalTriggerPlaceholder: {
+    color: "#9CA3AF",
+    fontSize: 16,
   },
   messageContainer: {
     flexDirection: "row",
@@ -611,5 +595,69 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.auth.primary,
     fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  modalBackdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#ffffff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: "80%",
+    minHeight: 200,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#1F2937",
+  },
+  closeButton: {
+    padding: 4,
+  },
+  modalItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  selectedModalItem: {
+    backgroundColor: "#FEF3F3",
+  },
+  modalItemText: {
+    fontSize: 16,
+    color: "#374151",
+  },
+  selectedModalItemText: {
+    color: Colors.auth.primary,
+    fontWeight: "500",
+  },
+  emptyContainer: {
+    alignItems: "center",
+    padding: 40,
+    gap: 12,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: "#9CA3AF",
   },
 });

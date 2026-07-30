@@ -17,7 +17,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import axios from "axios";
 import { Colors } from "@/app/constants/Colors";
 
-export default function ShopkeeperChangePasswordScreen() {
+export default function AdministratorChangePasswordScreen() {
   const insets = useSafeAreaInsets();
   const bottomSpacer = insets.bottom + 40;
   const { token } = useAuth();
@@ -74,7 +74,7 @@ export default function ShopkeeperChangePasswordScreen() {
 
     try {
       const response = await axios.put(
-        `${API_URL}/shop-keeper/change-password`,
+        `${API_URL}/administrator/change-password`,
         {
           current_password: currentPassword,
           new_password: newPassword,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   heroCard: {
     marginBottom: 18,
     padding: 18,
-    backgroundColor: Colors.shopKeeper.primary,
+    backgroundColor: Colors.administrator.primary,
     borderRadius: 20,
     shadowColor: Colors.global.shadow,
     shadowOffset: { width: 0, height: 2 },
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   button: {
-    backgroundColor: Colors.storeManager.button.buttonBg1,
+    backgroundColor: Colors.administrator.button.buttonBg1,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: "bold",
-    color: Colors.storeManager.button.buttonText1,
+    color: Colors.administrator.button.buttonText1,
     fontSize: 16,
   },
 });
