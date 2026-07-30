@@ -262,10 +262,6 @@ export default function LoginScreen() {
             <View style={styles.formContainer}>
               {/* User Type - Card Selection */}
               <View style={styles.userTypeContainer}>
-                <Text style={styles.label}>
-                  Select User Type <Text style={styles.requiredStar}>*</Text>
-                </Text>
-                
                 <View style={styles.cardGrid}>
                   {userTypeOptions.map((option) => {
                     const isSelected = loginUserType === option.key;
@@ -494,26 +490,26 @@ const styles = StyleSheet.create({
   },
   userTypeContainer: {
     marginBottom: 24,
+    width: "100%",
   },
   cardGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginHorizontal: -6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
   },
   userTypeCard: {
-    flex: 1,
-    minWidth: '30%',
-    maxWidth: '33.33%',
-    margin: 6,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
+    width: "31%",
+    height: 120,
+    paddingVertical: 12,
+    paddingHorizontal: 6,
     borderRadius: 12,
     borderWidth: 2,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    shadowColor: '#000',
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,

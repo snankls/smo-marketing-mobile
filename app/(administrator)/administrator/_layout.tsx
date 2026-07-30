@@ -70,13 +70,14 @@ function AdministratorHeader({ routeName }: { routeName?: string }) {
   return (
     <>
       <View style={styles.headerContainer}>
-        <View style={styles.headerSide}>
+        <View style={styles.headerLeft}>
           {showBack && (
             <TouchableOpacity
               onPress={() => router.back()}
               style={styles.headerButton}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Ionicons name="arrow-back" size={22} color="#000000" />
+              <Ionicons name="arrow-back" size={24} color="#000000" />
             </TouchableOpacity>
           )}
         </View>
@@ -85,31 +86,17 @@ function AdministratorHeader({ routeName }: { routeName?: string }) {
           <Image
             source={require("@/assets/images/logo-small.png")}
             style={styles.logoImage}
+            resizeMode="contain"
           />
         </View>
 
-        <View style={styles.headerSide}>
-          <TouchableOpacity
-            // onPress={() => {
-            //   router.push("/(administrator)/administrator/cart");
-            // }}
-            style={styles.headerButton}
-          >
-            <Ionicons name="cart-outline" size={24} color="#000000" />
-            {cartCount > 0 && (
-              <View style={styles.cartBadge}>
-                <Text style={styles.cartBadgeText}>
-                  {cartCount === 0 ? 0 : cartCount > 99 ? "99+" : cartCount}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
-          
+        <View style={styles.headerRight}>
           <TouchableOpacity
             onPress={() => setMenuVisible(true)}
             style={styles.headerButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons name="menu-outline" size={24} color="#000000" />
+            <Ionicons name="menu-outline" size={26} color="#000000" />
           </TouchableOpacity>
         </View>
       </View>
@@ -211,9 +198,6 @@ export default function AdministratorLayout() {
             shadowRadius: 12,
             elevation: 12,
           },
-
-          // THIS LINE HIDES TAB BAR
-          route.name === "change-password" && { display: "none" },
         ],
 
         sceneStyle: {
@@ -248,9 +232,9 @@ export default function AdministratorLayout() {
         }}
       />
       <Tabs.Screen
-        name="cart"
+        name="orders"
         options={{
-          title: "Orders",
+          title: "Orders List",
           tabBarIcon: ({ focused }) => (
             <View
               style={[
@@ -259,7 +243,7 @@ export default function AdministratorLayout() {
               ]}
             >
               <Ionicons
-                name={focused ? "cart" : "cart-outline"}
+                name={focused ? "receipt" : "receipt-outline"}
                 size={24}
                 color="#fff"
               />
@@ -269,12 +253,12 @@ export default function AdministratorLayout() {
         }}
       />
       <Tabs.Screen
-        name="orders"
+        name="storemanager"
         options={{
-          title: "Orders List",
+          title: "Store Manager",
           tabBarIcon: ({ focused }) => (
             <Ionicons
-              name={focused ? "receipt" : "receipt-outline"}
+              name={focused ? "business" : "business-outline"}
               size={30}
               color="#fff"
             />
@@ -292,6 +276,12 @@ export default function AdministratorLayout() {
               color="#fff"
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="storemanager-details"
+        options={{
+          href: null,
         }}
       />
       <Tabs.Screen
@@ -333,30 +323,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  cartBadge: {
-    position: "absolute",
-    top: -4,
-    right: -4,
-    backgroundColor: "#EF4444",
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
-    justifyContent: "center",
+  // headerButton: {
+  //   padding: 8,
+  // },
+
+
+  headerLeft: { // New style
+    flex: 1,
+    flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 4,
+    justifyContent: "flex-start",
   },
-  cartBadgeText: {
-    color: Colors.global.white,
-    fontSize: 10,
-    fontWeight: "bold",
+  headerCenter: { // New style (replaces headerSide)
+    flex: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerRight: { // New style (replaces headerSide)
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
   headerButton: {
     padding: 8,
-  },
-  headerCenter: {
-    flex: 1,
+    minWidth: 40, // Added for better touch area
+    minHeight: 40, // Added for better touch area
     alignItems: "center",
+    justifyContent: "center",
   },
+
+
+  // headerCenter: {
+  //   alignItems: "center",
+  // },
   logoImage: {
     width: 60,
     height: 60,
@@ -381,6 +381,11 @@ const styles = StyleSheet.create({
   },
   centerTabButtonFocused: {
     backgroundColor: Colors.administrator.primary,
+  },
+  menuButton: {
+    position: "absolute",
+    right: 16,
+    padding: 8,
   },
   modalOverlay: {
     flex: 1,

@@ -147,7 +147,6 @@ export default function ForgotPasswordScreen() {
 
     const isAdministrator = loginUserType === "administrator";
     const isShopKeeper = loginUserType === "shop_keeper";
-    const isStoreManager = loginUserType === "store_manager";
 
     // User type validation
     if (!loginUserType) {
@@ -158,10 +157,8 @@ export default function ForgotPasswordScreen() {
       return;
     }
 
-
     // Shop Keeper validation
     if (isShopKeeper) {
-
       if (!mobile) {
         setMessage({
           text: "Please enter your mobile number",
@@ -177,9 +174,7 @@ export default function ForgotPasswordScreen() {
         });
         return;
       }
-
     }
-
 
     // Administrator validation
     if (isAdministrator) {
@@ -203,13 +198,8 @@ export default function ForgotPasswordScreen() {
     }
 
     try {
-
       setLoading(true);
-
-      setMessage({
-        text: "",
-        type: null,
-      });
+      setMessage({ text: "", type: null });
 
       const response = await axios.post(
         `${API_URL}/forgot-password`,
@@ -221,40 +211,35 @@ export default function ForgotPasswordScreen() {
         }
       );
 
-
-      if (response.data.success === true) {
+      if (response.data.success === true || response.status === 200) {
+        // ✅ SUCCESS - Green message
+        const successMessage = response.data.message || 
+                              response.data.data?.message || 
+                              "✅ Password reset email sent successfully! Please check your email.";
 
         setMessage({
-          text:
-            response.data.message ||
-            "Password reset successfully. Please check your email.",
+          text: successMessage,
           type: "success",
         });
 
-
+        // Clear fields
         setMobile("");
         setBarcode("");
         setEmail("");
-
       } else {
+        // ❌ ERROR - Red message  
+        const errorMessage = response.data.message || 
+                            response.data.data?.message || 
+                            "Account verification failed";
 
         setMessage({
-          text:
-            response.data.message ||
-            "Account verification failed",
+          text: errorMessage,
           type: "error",
         });
-
       }
-
-
     } catch (error: any) {
-
-      console.error(
-        "Forgot password error:",
-        error.response?.data || error.message
-      );
-
+      // ❌ ERROR - Red message
+      console.error("Forgot password error:", error.response?.data || error.message);
 
       setMessage({
         text:
@@ -262,12 +247,8 @@ export default function ForgotPasswordScreen() {
           "Unable to verify account. Please try again.",
         type: "error",
       });
-
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -434,41 +415,40 @@ export default function ForgotPasswordScreen() {
             </View>
 
             {/* Message */}
-              {message.text ? (
-                <View
-                  style={[
-                    styles.messageContainer,
+            {message.text ? (
+              <View
+                style={[
+                  styles.messageContainer,
+                  message.type === "error"
+                    ? styles.errorContainer    // Red background
+                    : styles.successContainer   // Green background
+                ]}
+              >
+                <Ionicons
+                  name={
                     message.type === "error"
-                      ? styles.errorContainer
-                      : styles.successContainer
+                      ? "alert-circle"
+                      : "checkmark-circle"
+                  }
+                  size={22}
+                  color={
+                    message.type === "error"
+                      ? "#DC2626"    // Red
+                      : "#16A34A"    // Green
+                  }
+                />
+                <Text
+                  style={[
+                    styles.messageText,
+                    message.type === "error"
+                      ? styles.errorText    // Red text
+                      : styles.successText   // Green text
                   ]}
                 >
-                  <Ionicons
-                    name={
-                      message.type === "error"
-                        ? "alert-circle"
-                        : "checkmark-circle"
-                    }
-                    size={22}
-                    color={
-                      message.type === "error"
-                        ? "#DC2626"
-                        : "#16A34A"
-                    }
-                  />
-
-                  <Text
-                    style={[
-                      styles.messageText,
-                      message.type === "error"
-                        ? styles.errorText
-                        : styles.successText
-                    ]}
-                  >
-                    {message.text}
-                  </Text>
-                </View>
-              ) : null}
+                  {message.text}
+                </Text>
+              </View>
+            ) : null}
 
             {/* Verify Button */}
             <TouchableOpacity
@@ -516,7 +496,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
   },
   innerContainer: {
     flex: 1,
@@ -679,6 +658,7 @@ const styles = StyleSheet.create({
   },
   successText: {
     color: "#16A34A",
+    fontWeight: "600",
   },
   verifyButton: {
     backgroundColor: Colors.auth.primary,

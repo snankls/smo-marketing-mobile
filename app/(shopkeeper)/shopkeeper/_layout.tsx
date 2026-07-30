@@ -214,7 +214,6 @@ export default function ShopkeeperLayout() {
         header: ({ route }) => <ShopkeeperHeader routeName={route.name} />,
         tabBarHideOnKeyboard: true,
 
-        // HIDE TAB BAR FOR SPECIFIC SCREENS
         tabBarStyle: [
           {
             position: "absolute",

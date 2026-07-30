@@ -53,6 +53,7 @@ export default function AdministratorProfileScreen() {
         },
       });
 
+      console.log(res.data);
       setProfile(res.data);
 
     } catch (err) {
