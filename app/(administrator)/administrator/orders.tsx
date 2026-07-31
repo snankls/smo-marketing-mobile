@@ -12,11 +12,11 @@ import {
 import { useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { Colors } from "@/app/constants/Colors";
 import PageSearch from "@/app/components/PageSearch";
 import Pagination from "@/app/components/Pagination";
 import LoadingScreen from "@/app/components/LoadingScreen";
-import { useAuth } from "@/app/contexts/AuthContext";
-import { Colors } from "@/app/constants/Colors";
 
 type Order = {
   id: number;
@@ -316,7 +316,7 @@ export default function AdministratorOrdersScreen() {
   const stats = getStats();
   const filteredOrders = getFilteredOrders();
 
-  if (loading && !refreshing) {
+  if (loading) {
     return <LoadingScreen />;
   }
 

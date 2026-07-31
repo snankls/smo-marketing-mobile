@@ -11,12 +11,12 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { router } from "expo-router";
+import { Colors } from "@/app/constants/Colors";
 import PageSearch from "@/app/components/PageSearch";
 import PerPageDropdown from "@/app/components/PerPageDropdown";
 import Pagination from "@/app/components/Pagination";
-import { Colors } from "@/app/constants/Colors";
 import LoadingScreen from "@/app/components/LoadingScreen";
-import { router } from "expo-router";
 
 export default function ManagerStoreManagerScreen() {
   const { token } = useAuth();

@@ -316,7 +316,7 @@ export default function ShopKeeperOrdersScreen() {
   const stats = getStats();
   const filteredOrders = getFilteredOrders();
 
-  if (loading && !refreshing) {
+  if (loading) {
     return <LoadingScreen />;
   }
 

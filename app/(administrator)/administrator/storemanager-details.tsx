@@ -23,6 +23,8 @@ export default function AdministratorStoreManagerDetailsScreen() {
 
   const [passwordModal, setPasswordModal] = useState(false);
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [savingPassword, setSavingPassword] = useState(false);
   const { WhsCode } = useLocalSearchParams();
@@ -267,22 +269,50 @@ export default function AdministratorStoreManagerDetailsScreen() {
               </Text>
             </View>
 
-            <TextInput
-              style={styles.input}
-              placeholder="New Password"
-              placeholderTextColor="#999"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              placeholderTextColor="#999"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="New Password"
+                placeholderTextColor="#999"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeButton}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={22}
+                  color="#666"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Confirm Password"
+                placeholderTextColor="#999"
+                secureTextEntry={!showConfirmPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+
+              <TouchableOpacity
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={styles.eyeButton}
+              >
+                <Ionicons
+                  name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+                  size={22}
+                  color="#666"
+                />
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.modalActions}>
               <TouchableOpacity
                 style={styles.cancelButton}
@@ -432,7 +462,7 @@ const styles = StyleSheet.create({
   },
 
 
-    modalOverlay: {
+  modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",
@@ -454,6 +484,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
   },
+  passwordInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    marginBottom: 14,
+    paddingHorizontal: 12,
+  },
+
+  passwordInput: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    color: "#111827",
+  },
+
+  eyeButton: {
+    padding: 6,
+  },
 
   modalHeader: {
     flexDirection: "row",
@@ -462,32 +513,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     gap: 10,
   },
-
   modalTitle: {
     fontSize: 20,
     fontWeight: "700",
     color: "#111827",
   },
-
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    fontSize: 15,
-    color: "#111",
-    backgroundColor: "#F9FAFB",
-    marginBottom: 14,
-  },
-
   modalActions: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 10,
     gap: 12,
   },
-
   cancelButton: {
     flex: 1,
     height: 45,
@@ -496,13 +532,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   cancelText: {
     color: "#374151",
     fontWeight: "600",
     fontSize: 14,
   },
-
   saveButton: {
     flex: 1,
     height: 45,
@@ -511,7 +545,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   saveText: {
     color: "#fff",
     fontWeight: "700",
