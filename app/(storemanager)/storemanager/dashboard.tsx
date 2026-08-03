@@ -13,7 +13,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import { Colors } from "@/app/constants/Colors";
 import LoadingScreen from "@/app/components/LoadingScreen";
 
-export default function ManagerDashboard() {
+export default function StoreManagerDashboard() {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const insets = useSafeAreaInsets();
   const bottomSpacer = insets.bottom + 100;

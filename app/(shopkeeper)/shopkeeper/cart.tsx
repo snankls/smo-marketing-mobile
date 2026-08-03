@@ -216,9 +216,12 @@ export default function ShopkeeperCartScreen() {
         await AsyncStorage.removeItem('shopkeeper_cart');
         setChangedItems(new Set());
         await refreshCart();
-        router.replace("/(shopkeeper)/shopkeeper/orders");
-      } else {
-        Alert.alert("Error", json?.message || json?.error || "Order failed");
+        
+        // Navigate with a refresh parameter and small delay
+        router.replace({
+          pathname: "/(shopkeeper)/shopkeeper/orders",
+          params: { refresh: 'true', timestamp: Date.now().toString() }
+        });
       }
     } catch (err: any) {
       console.log("Order error:", err);
@@ -421,7 +424,6 @@ export default function ShopkeeperCartScreen() {
         </>
       )}
 
-      
     </ScrollView>
   );
 }

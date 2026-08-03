@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import {
   ScrollView,
   StyleSheet,
@@ -7,7 +7,6 @@ import {
   View,
   RefreshControl,
   Dimensions,
-  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useEffect, useCallback } from "react";
@@ -36,18 +35,28 @@ const QUICK_LINKS = [
     descTemplate: (count: number) => `${count} total orders placed`,
     route: "/(shopkeeper)/shopkeeper/orders"
   },
-  // {
-  //   id: 3,
-  //   icon: '📊',
-  //   title: 'Inventory Stats',
-  //   descKey: null,
-  //   descTemplate: () => 'Manage stock & analytics',
-  //   route: "/(shopkeeper)/shopkeeper/inventory"
-  // }
+  {
+    id: 3,
+    icon: "🛒",
+    title: "My Cart",
+    descKey: null,
+    descTemplate: () => "Review cart & checkout",
+    route: "/(shopkeeper)/shopkeeper/cart",
+  },
+  {
+    id: 4,
+    icon: "👤",
+    title: "My Profile",
+    descKey: null,
+    descTemplate: () => "View profile & account",
+    route: "/(shopkeeper)/shopkeeper/profile",
+  },
 ];
 
-export default function Dashboard() {
+export default function ShopKeeperDashboard() {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const params = useLocalSearchParams();
+  
   const insets = useSafeAreaInsets();
   const bottomSpacer = insets.bottom + 100;
   const { user, token } = useAuth();
@@ -60,8 +69,12 @@ export default function Dashboard() {
     refreshing: false,
   });
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (showLoading = false) => {
     try {
+      if (showLoading) {
+        setDashboardData(prev => ({ ...prev, refreshing: true }));
+      }
+      
       const response = await axios.get(`${API_URL}/dashboard`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -82,9 +95,38 @@ export default function Dashboard() {
     }
   };
 
+  // Initial load
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // Refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      // Check if we came from placing an order
+      const shouldRefresh = params.refresh === 'true';
+      
+      if (shouldRefresh) {
+        // Force refresh with a delay to ensure server has processed the order
+        setDashboardData(prev => ({ ...prev, loading: true }));
+        
+        // Add delay to ensure server has processed the order
+        setTimeout(() => {
+          fetchDashboardData();
+        }, 1000);
+        
+        // Clear the param to prevent multiple refreshes
+        router.setParams({ refresh: undefined, timestamp: undefined });
+      } else {
+        // Normal refresh
+        fetchDashboardData();
+      }
+      
+      return () => {
+        // Cleanup if needed
+      };
+    }, [params.refresh]) // Add params.refresh as dependency
+  );
 
   const onRefresh = useCallback(() => {
     setDashboardData(prev => ({ ...prev, refreshing: true }));

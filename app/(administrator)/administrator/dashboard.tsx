@@ -12,7 +12,7 @@ import { useState, useCallback } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { Colors } from "@/app/constants/Colors";
 
-export default function Dashboard() {
+export default function AdministratorDashboard() {
   const insets = useSafeAreaInsets();
   const bottomSpacer = insets.bottom + 100;
   const { user, token } = useAuth();

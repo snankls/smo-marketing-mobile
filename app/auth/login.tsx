@@ -54,15 +54,23 @@ export default function LoginScreen() {
 
   // remove this on production - only for testing convenience
   useEffect(() => {
+    // if (loginUserType === "shop_keeper") {
+    //   setIdentifier("923018087407");
+    //   setPassword("123456");
+    // }
     if (loginUserType === "shop_keeper") {
       setIdentifier("923018087407");
-      setPassword("123456");
+      setPassword("8lfgcO");
     }
 
     if (loginUserType === "store_manager") {
-      setIdentifier("FsCSDBP1");
-      setPassword("654321");
+      setIdentifier("FtBannA1");
+      setPassword("2ADEA366");
     }
+    // if (loginUserType === "store_manager") {
+    //   setIdentifier("FsCSDBP1");
+    //   setPassword("654321");
+    // }
 
     if (loginUserType === "administrator") {
       setIdentifier("923000000000");

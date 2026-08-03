@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router, Tabs, useFocusEffect } from "expo-router";
-import { useState, useCallback } from "react";
+import { router, Tabs } from "expo-router";
+import { useState } from "react";
 import {
   Image,
   Modal,
@@ -9,38 +9,36 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Version from "@/app/components/Version";
 import { Colors } from "@/app/constants/Colors";
 
 function AdministratorHeader({ routeName }: { routeName?: string }) {
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const { user, logout, token } = useAuth();
-  const [cartCount, setCartCount] = useState(0);
   const [menuVisible, setMenuVisible] = useState(false);
   const showBack = routeName === "dashboard" ? false : router.canGoBack();
 
-  const handleLogout = async () => {
-    setMenuVisible(false);
-    await logout();
-  };
-  // const handleLogout = () => {
+  // const handleLogout = async () => {
   //   setMenuVisible(false);
-
-  //   Alert.alert("Logout", "Are you sure you want to logout?", [
-  //     { text: "Cancel", style: "cancel" },
-  //     {
-  //       text: "Logout",
-  //       style: "destructive",
-  //       onPress: async () => {
-  //         await logout();
-  //       },
-  //     },
-  //   ]);
+  //   await logout();
   // };
+  const handleLogout = () => {
+    setMenuVisible(false);
+
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          await logout();
+        },
+      },
+    ]);
+  };
 
   const menuOptions = [
     {
