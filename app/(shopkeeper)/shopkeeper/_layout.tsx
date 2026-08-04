@@ -23,24 +23,20 @@ function ShopkeeperHeader({ routeName }: { routeName?: string }) {
   const [menuVisible, setMenuVisible] = useState(false);
   const showBack = routeName === "dashboard" ? false : router.canGoBack();
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setMenuVisible(false);
-    await logout();
-  };
-  // const handleLogout = () => {
-  //   setMenuVisible(false);
 
-  //   Alert.alert("Logout", "Are you sure you want to logout?", [
-  //     { text: "Cancel", style: "cancel" },
-  //     {
-  //       text: "Logout",
-  //       style: "destructive",
-  //       onPress: async () => {
-  //         await logout();
-  //       },
-  //     },
-  //   ]);
-  // };
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          await logout();
+        },
+      },
+    ]);
+  };
 
   // Add this function
   const loadCartCount = async () => {
