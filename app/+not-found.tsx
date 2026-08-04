@@ -12,8 +12,8 @@ export default function NotFoundScreen() {
       router.replace('/(shopkeeper)/shopkeeper/dashboard');
     } else if (userType === 'storemanager') {
       router.replace('/(storemanager)/storemanager/dashboard');
-    } else {
-      router.replace('/');
+    } else if (userType === 'administrator') {
+      router.replace('/(administrator)/administrator/dashboard');
     }
   };
 

@@ -53,27 +53,28 @@ export default function LoginScreen() {
   }, []);
 
   // remove this on production - only for testing convenience
-  useEffect(() => {
-    if (loginUserType === "shop_keeper") {
-      setIdentifier("923336164045");
-      //setIdentifier("923018087407");
-      setPassword("8lfgcO");
-    }
+  // useEffect(() => {
+  //   if (loginUserType === "shop_keeper") {
+  //     //setIdentifier("923319345493");
+  //     setIdentifier("923336164045");
+  //     //setIdentifier("923018087407");
+  //     setPassword("8lfgcO");
+  //   }
 
-    if (loginUserType === "store_manager") {
-      setIdentifier("FtBannA1");
-      setPassword("2ADEA366");
-    }
-    // if (loginUserType === "store_manager") {
-    //   setIdentifier("FsCSDBP1");
-    //   setPassword("654321");
-    // }
+  //   // if (loginUserType === "store_manager") {
+  //   //   setIdentifier("FtBannA1");
+  //   //   setPassword("2ADEA366");
+  //   // }
+  //   if (loginUserType === "store_manager") {
+  //     setIdentifier("FsCSDBP1");
+  //     setPassword("654321");
+  //   }
 
-    if (loginUserType === "administrator") {
-      setIdentifier("923000000000");
-      setPassword("admin123");
-    }
-  }, [loginUserType]);
+  //   if (loginUserType === "administrator") {
+  //     setIdentifier("923000000000");
+  //     setPassword("admin123");
+  //   }
+  // }, [loginUserType]);
 
   const [message, setMessage] = useState<{
     text: string;
@@ -225,11 +226,11 @@ export default function LoginScreen() {
   const getUserTypeColor = (key: string) => {
     switch(key) {
       case 'shop_keeper':
-        return '#3B82F6';
+        return Colors.shopKeeper.primary;
       case 'store_manager':
-        return '#8B5CF6';
+        return Colors.storeManager.primary;
       case 'administrator':
-        return '#EF4444';
+        return Colors.administrator.primary;
       default:
         return '#6B7280';
     }
@@ -320,7 +321,7 @@ export default function LoginScreen() {
                     style={styles.input}
                     value={identifier}
                     onChangeText={setIdentifier}
-                    placeholder="Enter your phone number"
+                    placeholder="923XXXXXXXXX"
                     keyboardType="phone-pad"
                     editable={!loading}
                   />
@@ -338,7 +339,6 @@ export default function LoginScreen() {
                     style={[styles.input, styles.passwordInput]}
                     value={password}
                     onChangeText={setPassword}
-                    placeholder="Enter your password"
                     secureTextEntry={!showPassword}
                     editable={!loading}
                   />

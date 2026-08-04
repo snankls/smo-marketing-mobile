@@ -82,7 +82,6 @@ export default function ForgotPasswordScreen() {
 
         setUserTypeOptions(statusArray);
 
-
         if (statusArray.length > 0) {
 
           const exists = statusArray.find(
@@ -133,11 +132,9 @@ export default function ForgotPasswordScreen() {
   const getUserTypeColor = (key: string) => {
     switch(key) {
       case 'shop_keeper':
-        return '#3B82F6';
-      case 'store_manager':
-        return '#8B5CF6';
+        return Colors.shopKeeper.primary;
       case 'administrator':
-        return '#EF4444';
+        return Colors.administrator.primary;
       default:
         return '#6B7280';
     }
@@ -147,7 +144,6 @@ export default function ForgotPasswordScreen() {
 
     const isAdministrator = loginUserType === "administrator";
     const isShopKeeper = loginUserType === "shop_keeper";
-    const isStoreManager = loginUserType === "store_manager";
 
     // User type validation
     if (!loginUserType) {
@@ -179,7 +175,6 @@ export default function ForgotPasswordScreen() {
       }
 
     }
-
 
     // Administrator validation
     if (isAdministrator) {
@@ -221,7 +216,6 @@ export default function ForgotPasswordScreen() {
         }
       );
 
-
       if (response.data.success === true) {
 
         setMessage({
@@ -230,7 +224,6 @@ export default function ForgotPasswordScreen() {
             "Password reset successfully. Please check your email.",
           type: "success",
         });
-
 
         setMobile("");
         setBarcode("");
@@ -247,14 +240,12 @@ export default function ForgotPasswordScreen() {
 
       }
 
-
     } catch (error: any) {
 
       console.error(
         "Forgot password error:",
         error.response?.data || error.message
       );
-
 
       setMessage({
         text:
@@ -263,11 +254,8 @@ export default function ForgotPasswordScreen() {
         type: "error",
       });
 
-
     } finally {
-
       setLoading(false);
-
     }
   };
 

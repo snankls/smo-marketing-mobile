@@ -5,7 +5,6 @@ import { StatusBar } from "expo-status-bar";
 import NetInfo from "@react-native-community/netinfo";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./components/CartContext";
-import LoadingScreen from "./components/LoadingScreen";
 
 function RootNavigation() {
   const { token, userType, isLoading } = useAuth();
