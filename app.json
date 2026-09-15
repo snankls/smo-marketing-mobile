@@ -21,7 +21,8 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.snankls.awmarketing"
+      "package": "com.snankls.awmarketing",
+      "usesCleartextTraffic": true
     },
     "web": {
       "output": "static",

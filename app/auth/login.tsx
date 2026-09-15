@@ -120,95 +120,223 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async () => {
-    if (!identifier || !password) {
-      setMessage({ text: "Please fill in all fields", type: "error" });
-      return;
-    }
 
-    if (!loginUserType) {
-      setMessage({ text: "Please select user type", type: "error" });
-      return;
-    }
+    console.log("API_URL =", API_URL);
+    
+  if (!identifier || !password) {
+    setMessage({ text: "Please fill in all fields", type: "error" });
+    return;
+  }
 
-    setLoading(true);
-    setMessage({ text: "", type: null });
+  if (!loginUserType) {
+    setMessage({ text: "Please select user type", type: "error" });
+    return;
+  }
+
+  setLoading(true);
+  setMessage({ text: "", type: null });
+
+  try {
+    console.log("=================================");
+    console.log("LOGIN REQUEST");
+    console.log("API URL:", `${API_URL}/login`);
+    console.log("User Type:", loginUserType);
+    console.log("Identifier:", identifier);
+    console.log("=================================");
+
+    const response = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        mobile: identifier,
+        password: password,
+        user_type: loginUserType,
+      }),
+    });
+
+    console.log("HTTP STATUS:", response.status);
+    console.log("CONTENT TYPE:", response.headers.get("content-type"));
+
+    // Read as text first so we can see Laravel errors/HTML too
+    const responseText = await response.text();
+
+    console.log("RAW RESPONSE:", responseText);
+
+    let data: any = {};
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          mobile: identifier,
-          password,
-          user_type: loginUserType,
-        }),
-      });
+      data = JSON.parse(responseText);
+    } catch (jsonError) {
+      console.error("JSON PARSE ERROR:", jsonError);
 
-      const data = await response.json();
-
-      if (response.ok && data?.data?.authorisation?.token) {
-        const token = data.data.authorisation.token;
-        let userData: any = {};
-
-        if (loginUserType === "shop_keeper") {
-          userData = {
-            id: data.data.user.CardCode,
-            CardCode: data.data.user.CardCode,
-            CardName: data.data.user.CardName,
-            CntctPrsn: data.data.user.CntctPrsn,
-            Cellular: data.data.user.Cellular,
-          };
-        } else if (loginUserType === "store_manager") {
-          userData = {
-            id: data.data.user.WhsCode,
-            WhsCode: data.data.user.WhsCode,
-            WhsName: data.data.user.WhsName,
-            Location: data.data.user.Location,
-            City: data.data.user.City,
-            Country: data.data.user.Country,
-            U_plist: data.data.user.U_plist,
-          };
-        } else if (loginUserType === "administrator") {
-          userData = {
-            id: data.data.user.id,
-            fullname: data.data.user.fullname,
-            username: data.data.user.username,
-            mobile: data.data.user.mobile,
-            email: data.data.user.email,
-            role: data.data.user.role || 'administrator',
-          };
-        }
-
-        await login(token, userData, loginUserType);
-
-        if (loginUserType === "shop_keeper") {
-          router.replace("/(shopkeeper)/shopkeeper/dashboard");
-        } else if (loginUserType === "store_manager") {
-          router.replace("/(storemanager)/storemanager/dashboard");
-        } else if (loginUserType === "administrator") {
-          router.replace("/(administrator)/administrator/dashboard");
-        }
-
-        setMessage({ text: "Login successful!", type: "success" });
-      } else {
-        setMessage({
-          text: data?.message || "Login failed",
-          type: "error",
-        });
-      }
-    } catch (err) {
-      console.error("Login error:", err);
       setMessage({
-        text: "Unable to connect to server. Please check your internet connection.",
+        text: `Server returned invalid response (${response.status})`,
         type: "error",
       });
-    } finally {
-      setLoading(false);
+
+      return;
     }
-  };
+
+    console.log("PARSED RESPONSE:", data);
+
+    if (response.ok && data?.data?.authorisation?.token) {
+      const token = data.data.authorisation.token;
+      let userData: any = {};
+
+      if (loginUserType === "shop_keeper") {
+        userData = {
+          id: data.data.user.CardCode,
+          CardCode: data.data.user.CardCode,
+          CardName: data.data.user.CardName,
+          CntctPrsn: data.data.user.CntctPrsn,
+          Cellular: data.data.user.Cellular,
+        };
+      } else if (loginUserType === "store_manager") {
+        userData = {
+          id: data.data.user.WhsCode,
+          WhsCode: data.data.user.WhsCode,
+          WhsName: data.data.user.WhsName,
+          Location: data.data.user.Location,
+          City: data.data.user.City,
+          Country: data.data.user.Country,
+          U_plist: data.data.user.U_plist,
+        };
+      } else if (loginUserType === "administrator") {
+        userData = {
+          id: data.data.user.id,
+          fullname: data.data.user.fullname,
+          username: data.data.user.username,
+          mobile: data.data.user.mobile,
+          email: data.data.user.email,
+          role: data.data.user.role || "administrator",
+        };
+      }
+
+      await login(token, userData, loginUserType);
+
+      if (loginUserType === "shop_keeper") {
+        router.replace("/(shopkeeper)/shopkeeper/dashboard");
+      } else if (loginUserType === "store_manager") {
+        router.replace("/(storemanager)/storemanager/dashboard");
+      } else if (loginUserType === "administrator") {
+        router.replace("/(administrator)/administrator/dashboard");
+      }
+
+    } else {
+      setMessage({
+        text: data?.message || `Login failed (${response.status})`,
+        type: "error",
+      });
+    }
+
+  } catch (err: any) {
+    console.error("=================================");
+    console.error("LOGIN EXCEPTION");
+    console.error("Error:", err);
+    console.error("Message:", err?.message);
+    console.error("=================================");
+
+    setMessage({
+      text: err?.message || "Unable to connect to server.",
+      type: "error",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+  // const handleLogin = async () => {
+  //   if (!identifier || !password) {
+  //     setMessage({ text: "Please fill in all fields", type: "error" });
+  //     return;
+  //   }
+
+  //   if (!loginUserType) {
+  //     setMessage({ text: "Please select user type", type: "error" });
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   setMessage({ text: "", type: null });
+
+  //   try {
+  //     const response = await fetch(`${API_URL}/login`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         mobile: identifier,
+  //         password,
+  //         user_type: loginUserType,
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok && data?.data?.authorisation?.token) {
+  //       const token = data.data.authorisation.token;
+  //       let userData: any = {};
+
+  //       if (loginUserType === "shop_keeper") {
+  //         userData = {
+  //           id: data.data.user.CardCode,
+  //           CardCode: data.data.user.CardCode,
+  //           CardName: data.data.user.CardName,
+  //           CntctPrsn: data.data.user.CntctPrsn,
+  //           Cellular: data.data.user.Cellular,
+  //         };
+  //       } else if (loginUserType === "store_manager") {
+  //         userData = {
+  //           id: data.data.user.WhsCode,
+  //           WhsCode: data.data.user.WhsCode,
+  //           WhsName: data.data.user.WhsName,
+  //           Location: data.data.user.Location,
+  //           City: data.data.user.City,
+  //           Country: data.data.user.Country,
+  //           U_plist: data.data.user.U_plist,
+  //         };
+  //       } else if (loginUserType === "administrator") {
+  //         userData = {
+  //           id: data.data.user.id,
+  //           fullname: data.data.user.fullname,
+  //           username: data.data.user.username,
+  //           mobile: data.data.user.mobile,
+  //           email: data.data.user.email,
+  //           role: data.data.user.role || 'administrator',
+  //         };
+  //       }
+
+  //       await login(token, userData, loginUserType);
+
+  //       if (loginUserType === "shop_keeper") {
+  //         router.replace("/(shopkeeper)/shopkeeper/dashboard");
+  //       } else if (loginUserType === "store_manager") {
+  //         router.replace("/(storemanager)/storemanager/dashboard");
+  //       } else if (loginUserType === "administrator") {
+  //         router.replace("/(administrator)/administrator/dashboard");
+  //       }
+
+  //       setMessage({ text: "Login successful!", type: "success" });
+  //     } else {
+  //       setMessage({
+  //         text: data?.message || "Login failed",
+  //         type: "error",
+  //       });
+  //     }
+  //   } catch (err) {
+  //     console.error("Login error:", err);
+  //     setMessage({
+  //       text: "Unable to connect to server. Please check your internet connection.",
+  //       type: "error",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const getUserTypeIcon = (key: string) => {
     switch(key) {
